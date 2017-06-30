@@ -24,6 +24,10 @@ import (
 
 type Ncurses struct{}
 
+func (ncurses Ncurses) Name() string {
+	return "ncurses"
+}
+
 func (ncurses Ncurses) URL(version string) string {
 	return fmt.Sprintf("http://ftp.gnu.org/gnu/ncurses/ncurses-%s.tar.gz", version)
 }

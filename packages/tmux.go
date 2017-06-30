@@ -8,6 +8,10 @@ import (
 
 type Tmux struct{}
 
+func (tmux Tmux) Name() string {
+	return "tmux"
+}
+
 func (tmux Tmux) URL(version string) string {
 	return fmt.Sprintf("https://github.com/tmux/tmux/releases/download/%s/tmux-%s.tar.gz", version, version)
 }

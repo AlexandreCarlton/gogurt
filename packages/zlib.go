@@ -7,6 +7,10 @@ import (
 
 type Zlib struct{}
 
+func (zlib Zlib) Name() string {
+	return "zlib"
+}
+
 func (zlib Zlib) URL(version string) string {
 	return fmt.Sprintf("http://zlib.net/zlib-%s.tar.gz", version)
 }

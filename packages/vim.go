@@ -15,8 +15,11 @@ import (
 	"github.com/alexandrecarlton/gogurt"
 )
 
-
 type Vim struct{}
+
+func (vim Vim) Name() string {
+	return "vim"
+}
 
 func (vim Vim) URL(version string) string {
 	return fmt.Sprintf("https://github.com/vim/vim/archive/v%s.tar.gz", version)

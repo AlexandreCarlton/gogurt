@@ -9,6 +9,10 @@ import (
 
 type OpenSSL struct{}
 
+func (openssl OpenSSL) Name() string {
+	return "openssl"
+}
+
 func (openssl OpenSSL) URL(version string) string {
 	return fmt.Sprintf("https://www.openssl.org/source/openssl-%s.tar.gz", version)
 }

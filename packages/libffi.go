@@ -8,6 +8,10 @@ import (
 
 type LibFFI struct{}
 
+func (libffi LibFFI) Name() string {
+	return "libffi"
+}
+
 func (libffi LibFFI) URL(version string) string {
 	// We use the kernel.org mirror since it is avilable via https (not just ftp)
 	return fmt.Sprintf("https://mirrors.kernel.org/sourceware/libffi/libffi-%s.tar.gz", version)

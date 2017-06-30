@@ -13,6 +13,10 @@ import (
 
 type Python2 struct{}
 
+func (python2 Python2) Name() string {
+	return "python2"
+}
+
 func (python2 Python2) URL(version string) string {
 	return fmt.Sprintf("https://www.python.org/ftp/python/%s/Python-%s.tar.xz", version, version)
 }

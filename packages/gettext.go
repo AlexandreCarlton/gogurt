@@ -7,6 +7,9 @@ import (
 
 type GetText struct{}
 
+func (gettext GetText) Name() string {
+	return "gettext"
+}
 
 func (gettext GetText) URL(version string) string {
 	return fmt.Sprintf("https://ftp.gnu.org/gnu/gettext/gettext-%s.tar.xz", version)

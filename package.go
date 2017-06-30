@@ -2,6 +2,7 @@ package gogurt
 
 // Package ...
 type Package interface {
+	Name() string
 	URL(version string) string
 
 	// These execute in the checked out directory.

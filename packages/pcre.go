@@ -8,6 +8,9 @@ import (
 
 type Pcre struct{}
 
+func (pcre Pcre) Name() string {
+	return "pcre"
+}
 
 func (pcre Pcre) URL(version string) string {
 	return fmt.Sprintf("http://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%s.tar.gz", version)

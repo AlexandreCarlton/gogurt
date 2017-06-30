@@ -9,6 +9,10 @@ import (
 
 type Bzip2 struct {}
 
+func (bzip2 Bzip2) Name() string {
+	return "bzip2"
+}
+
 func (bzip2 Bzip2) URL(version string) string {
 	return fmt.Sprintf("http://www.bzip.org/%s/bzip2-%s.tar.gz", version, version)
 }

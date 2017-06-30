@@ -7,6 +7,10 @@ import (
 
 type Libevent struct{}
 
+func (libevent Libevent) Name() string {
+	return "libevent"
+}
+
 func (libevent Libevent) URL(version string) string {
 	return fmt.Sprintf("https://github.com/libevent/libevent/releases/download/release-%s/libevent-%s.tar.gz", version, version)
 }
