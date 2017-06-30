@@ -22,7 +22,9 @@ func (python2 Python2) URL(version string) string {
 }
 
 func (python2 Python2) Build(config gogurt.Config) error {
-	gogurt.ReplaceInFile("Modules/Setup.dist", "^#SSL=.*", "SSL=" + strings.Replace(config.InstallDir("openssl"), "/", "\\/", -1))
+	openssl := OpenSSL{}
+
+	gogurt.ReplaceInFile("Modules/Setup.dist", "^#SSL=.*", "SSL=" + strings.Replace(config.InstallDir(openssl.Name()), "/", "\\/", -1))
 	uncommentModule("_ssl")
 	uncommentModule("\t-DUSE_SSL")
 	uncommentModule("\t-L\\$\\(SSL\\)") // TODO: Redo this section, these aren't modules.
@@ -69,16 +71,16 @@ func (python2 Python2) Build(config gogurt.Config) error {
 
 
 	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir("python2"),
+		Prefix: config.InstallDir(python2.Name()),
 		Args: []string{
 			"--disable-shared",
 			"--enable-unicode=ucs4",
 		},
 		CFlags: []string{
-			"-I" + config.IncludeDir("zlib"),
+			"-I" + config.IncludeDir(zlib.Name()),
 		},
 		LdFlags: []string{
-			"-L" + config.LibDir("zlib"),
+			"-L" + config.LibDir(zlib.Name()),
 		},
 		Libs: []string{
 			"-lz",
@@ -100,6 +102,9 @@ func (python2 Python2) Build(config gogurt.Config) error {
 	return make.Run();
 }
 
+// TODO: Optimise - Taking too slow
+// Perhaps only open it once, and modify it then.
+
 func uncommentModule(module string) error {
 	return gogurt.ReplaceInFile(
 		"Modules/Setup.dist",
@@ -109,7 +114,6 @@ func uncommentModule(module string) error {
 }
 
 func addModule(module string, sources []string) error {
-	// TODO:
 	setupDistContents, _ := ioutil.ReadFile("Modules/Setup.dist")
 	if bytes.Contains(setupDistContents, []byte(module)) {
 		log.Printf("Modules/Setup.dist already contains %s.\n", module)

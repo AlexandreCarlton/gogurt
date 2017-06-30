@@ -28,7 +28,7 @@ func (libffi LibFFI) Build(config gogurt.Config) error {
 	}
 
 	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir("libffi"),
+		Prefix: config.InstallDir(libffi.Name()),
 		Args: []string{
 			"--enable-static",
 			"--disable-shared",
@@ -51,11 +51,7 @@ func (libffi LibFFI) Build(config gogurt.Config) error {
 }
 
 func (libffi LibFFI) Install(config gogurt.Config) error {
-	makeInstall := gogurt.MakeCmd{
-		Args: []string{
-			"install",
-		},
-	}.Cmd()
+	makeInstall := gogurt.MakeCmd{Args: []string{"install"}}.Cmd()
 	return makeInstall.Run()
 }
 

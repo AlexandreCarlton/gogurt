@@ -17,6 +17,8 @@ func (pcre Pcre) URL(version string) string {
 }
 
 func (pcre Pcre) Build(config gogurt.Config) error {
+  zlib := Zlib{}
+	bzip2 := Bzip2{}
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.Prefix,
 		Args: []string{
@@ -29,12 +31,12 @@ func (pcre Pcre) Build(config gogurt.Config) error {
 			"--enable-jit",
 		},
 		CFlags: []string{
-			"-I" + config.IncludeDir("zlib"),
-			"-I" + config.IncludeDir("bzip2"),
+			"-I" + config.IncludeDir(zlib.Name()),
+			"-I" + config.IncludeDir(bzip2.Name()),
 		},
 		LdFlags: []string{
-			"-L" + config.LibDir("zlib"),
-			"-L" + config.LibDir("bzip2"),
+			"-L" + config.LibDir(zlib.Name()),
+			"-L" + config.LibDir(bzip2.Name()),
 		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {

@@ -17,7 +17,7 @@ func (zlib Zlib) URL(version string) string {
 
 func (zlib Zlib) Build(config gogurt.Config) error {
 	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir("zlib"),
+		Prefix: config.InstallDir(zlib.Name()),
 		Args: []string{ "--static" },
 	}.Cmd()
 	if err := configure.Run(); err != nil {

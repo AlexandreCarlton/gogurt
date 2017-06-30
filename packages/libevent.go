@@ -34,7 +34,7 @@ func (libevent Libevent) Install(config gogurt.Config) error {
 	make := gogurt.MakeCmd{
 		Args: []string{
 			"install",
-			"prefix=" + config.InstallDir("libevent"),
+			"prefix=" + config.InstallDir(libevent.Name()),
 		},
 	}.Cmd()
 	return make.Run()

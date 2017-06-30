@@ -91,7 +91,8 @@ func (ncurses Ncurses) Dependencies() []string {
 // For now, we omit entries containing '+'
 
 func getTerminals(config gogurt.Config) ([]string, error) {
-	termInfoFile, err := os.Open(filepath.Join(config.BuildDir("ncurses"), "misc", "terminfo.src"))
+	ncurses := Ncurses{}
+	termInfoFile, err := os.Open(filepath.Join(config.BuildDir(ncurses.Name()), "misc", "terminfo.src"))
 	if err != nil {
 		return []string{}, err
 	}

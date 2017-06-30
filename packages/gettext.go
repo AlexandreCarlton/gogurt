@@ -17,7 +17,7 @@ func (gettext GetText) URL(version string) string {
 
 func (gettext GetText) Build(config gogurt.Config) error {
 	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir("gettext"),
+		Prefix: config.InstallDir(gettext.Name()),
 		Args: []string{
 			"--enable-static",
 			"--disable-shared",

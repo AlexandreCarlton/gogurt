@@ -17,21 +17,24 @@ func (tmux Tmux) URL(version string) string {
 }
 
 func (tmux Tmux) Build(config gogurt.Config) error {
+	libevent := Libevent{}
+	ncurses := Ncurses{}
+
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.Prefix,
 	 	Args: []string{
 			"--enable-static",
 		},
 		CFlags: []string{
-			"-I" + config.IncludeDir("libevent"),
-			"-I" + config.IncludeDir("ncurses"),
+			"-I" + config.IncludeDir(libevent.Name()),
+			"-I" + config.IncludeDir(ncurses.Name()),
 		},
 		LdFlags: []string{
-			"-L" + config.LibDir("libevent"),
-			"-L" + config.LibDir("ncurses"),
+			"-L" + config.LibDir(libevent.Name()),
+			"-L" + config.LibDir(ncurses.Name()),
 		},
 		PkgConfigPaths: []string{
-			filepath.Join(config.InstallDir("ncurses"), "share", "pkgconfig"),
+			filepath.Join(config.InstallDir(ncurses.Name()), "share", "pkgconfig"),
 		},
 	}.Cmd()
 	configure.Env = append(
@@ -51,7 +54,7 @@ func (tmux Tmux) Install(config gogurt.Config) error {
 	make := gogurt.MakeCmd{
 		Args: []string{
 			"install",
-			"prefix=" + config.InstallDir("tmux"),
+			"prefix=" + config.InstallDir(tmux.Name()),
 		},
 	}.Cmd()
 	return make.Run()

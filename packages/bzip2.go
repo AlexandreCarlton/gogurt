@@ -29,7 +29,7 @@ func (bzip2 Bzip2) Install(config gogurt.Config) error {
 	cmd := gogurt.MakeCmd{
 		Args: []string{
 			"install",
-			"PREFIX=" + config.InstallDir("bzip2"),
+			"PREFIX=" + config.InstallDir(bzip2.Name()),
 		},
 	}.Cmd()
 	fmt.Println(cmd)

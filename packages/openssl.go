@@ -20,7 +20,7 @@ func (openssl OpenSSL) URL(version string) string {
 func (openssl OpenSSL) Build(config gogurt.Config) error {
 	configure := exec.Command(
 		"./config",
-		"--prefix=" + config.InstallDir("openssl"),
+		"--prefix=" + config.InstallDir(openssl.Name()),
 		"no-shared",
 		"--with-zlib-include=" + config.IncludeDir("zlib"),
 		"--with-zlib-lib=" + config.LibDir("zlib"),
