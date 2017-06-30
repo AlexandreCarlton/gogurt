@@ -1,8 +1,4 @@
-package packages
-
-import (
-	"github.com/alexandrecarlton/gogurt"
-)
+package gogurt
 
 // Package ...
 type Package interface {
@@ -10,8 +6,8 @@ type Package interface {
 
 	// These execute in the checked out directory.
 	// Should these take in a config object? Would make things much easier and flexible.
-	Build(config gogurt.Config) error
-	Install(config gogurt.Config) error
+	Build(config Config) error
+	Install(config Config) error
 	// Clean() int
 
 	Dependencies() []string

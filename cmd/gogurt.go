@@ -55,7 +55,7 @@ func installPackage(name string, config gogurt.Config) {
 	// TODO: Implement reflection?
 	// Nah, do this, allows for aliases
 	// e.g. can use 'ag' for 'the_silver_searcher'
-	mappings := map[string]packages.Package{
+	mappings := map[string]gogurt.Package{
 		"bzip2": packages.Bzip2{},
 		"gettext" : packages.GetText{},
 		"libevent": packages.Libevent{},
