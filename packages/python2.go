@@ -23,8 +23,9 @@ func (python2 Python2) URL(version string) string {
 
 func (python2 Python2) Build(config gogurt.Config) error {
 	openssl := OpenSSL{}
+	zlib := Zlib{}
 
-	gogurt.ReplaceInFile("Modules/Setup.dist", "^#SSL=.*", "SSL=" + strings.Replace(config.InstallDir(openssl.Name()), "/", "\\/", -1))
+	gogurt.ReplaceInFile("Modules/Setup.dist", "^#SSL=.*", "SSL=" + strings.Replace(config.InstallDir(openssl), "/", "\\/", -1))
 	uncommentModule("_ssl")
 	uncommentModule("\t-DUSE_SSL")
 	uncommentModule("\t-L\\$\\(SSL\\)") // TODO: Redo this section, these aren't modules.
@@ -71,16 +72,16 @@ func (python2 Python2) Build(config gogurt.Config) error {
 
 
 	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir(python2.Name()),
+		Prefix: config.InstallDir(python2),
 		Args: []string{
 			"--disable-shared",
 			"--enable-unicode=ucs4",
 		},
 		CFlags: []string{
-			"-I" + config.IncludeDir(zlib.Name()),
+			"-I" + config.IncludeDir(zlib),
 		},
 		LdFlags: []string{
-			"-L" + config.LibDir(zlib.Name()),
+			"-L" + config.LibDir(zlib),
 		},
 		Libs: []string{
 			"-lz",
@@ -139,11 +140,11 @@ func (python2 Python2) Install(config gogurt.Config) error {
 	return makeInstall.Run();
 }
 
-func (python2 Python2) Dependencies() []string {
-	return []string{
-		"libffi", // On second thought, is libffi really necessary?
-		"zlib",
-		"openssl",
+func (python2 Python2) Dependencies() []gogurt.Package {
+	return []gogurt.Package{
+		LibFFI{}, // On second thought, is libffi really necessary?
+		Zlib{},
+		OpenSSL{},
 	}
 }
 

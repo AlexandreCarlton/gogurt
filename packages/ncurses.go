@@ -39,7 +39,7 @@ func (ncurses Ncurses) Build(config gogurt.Config) error {
 	}
 
 	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir("ncurses"),
+		Prefix: config.InstallDir(ncurses),
 		Args: []string{
 			"--with-static",
 			"--with-termlib", // generate separate terminfo library
@@ -65,7 +65,7 @@ func (ncurses Ncurses) Build(config gogurt.Config) error {
 			"--enable-widec", // compile with wide-char/UTF-8 code
 			"--disable-database", // Do not use terminfo, only fallbacks/termcap
 			"--disable-db-install", // suppress install of terminal database
-			"--with-pkg-config-libdir=" + config.InstallDir("ncurses") + "/share/pkgconfig",
+			"--with-pkg-config-libdir=" + config.InstallDir(ncurses) + "/share/pkgconfig",
 		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
@@ -80,8 +80,8 @@ func (ncurses Ncurses) Install(config gogurt.Config) error {
 	return make.Run()
 }
 
-func (ncurses Ncurses) Dependencies() []string {
-	return []string{}
+func (ncurses Ncurses) Dependencies() []gogurt.Package {
+	return []gogurt.Package{}
 }
 
 // from misc/terminfo.src:
@@ -92,7 +92,7 @@ func (ncurses Ncurses) Dependencies() []string {
 
 func getTerminals(config gogurt.Config) ([]string, error) {
 	ncurses := Ncurses{}
-	termInfoFile, err := os.Open(filepath.Join(config.BuildDir(ncurses.Name()), "misc", "terminfo.src"))
+	termInfoFile, err := os.Open(filepath.Join(config.BuildDir(ncurses), "misc", "terminfo.src"))
 	if err != nil {
 		return []string{}, err
 	}

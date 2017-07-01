@@ -18,12 +18,13 @@ func (openssl OpenSSL) URL(version string) string {
 }
 
 func (openssl OpenSSL) Build(config gogurt.Config) error {
+	zlib := Zlib{}
 	configure := exec.Command(
 		"./config",
-		"--prefix=" + config.InstallDir(openssl.Name()),
+		"--prefix=" + config.InstallDir(openssl),
 		"no-shared",
-		"--with-zlib-include=" + config.IncludeDir("zlib"),
-		"--with-zlib-lib=" + config.LibDir("zlib"),
+		"--with-zlib-include=" + config.IncludeDir(zlib),
+		"--with-zlib-lib=" + config.LibDir(zlib),
 	)
 	if err := configure.Run(); err != nil {
 		return err
@@ -40,7 +41,9 @@ func (openssl OpenSSL) Install(config gogurt.Config) error {
 	return makeInstall.Run()
 }
 
-func (openssl OpenSSL) Dependencies() []string {
-	return []string{"zlib"}
+func (openssl OpenSSL) Dependencies() []gogurt.Package {
+	return []gogurt.Package{
+		Zlib{},
+	}
 }
 

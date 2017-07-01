@@ -34,12 +34,12 @@ func (libevent Libevent) Install(config gogurt.Config) error {
 	make := gogurt.MakeCmd{
 		Args: []string{
 			"install",
-			"prefix=" + config.InstallDir(libevent.Name()),
+			"prefix=" + config.InstallDir(libevent),
 		},
 	}.Cmd()
 	return make.Run()
 }
 
-func (libevent Libevent) Dependencies() []string {
-	return []string{}
+func (libevent Libevent) Dependencies() []gogurt.Package {
+	return []gogurt.Package{}
 }

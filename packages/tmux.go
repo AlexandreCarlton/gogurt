@@ -26,15 +26,15 @@ func (tmux Tmux) Build(config gogurt.Config) error {
 			"--enable-static",
 		},
 		CFlags: []string{
-			"-I" + config.IncludeDir(libevent.Name()),
-			"-I" + config.IncludeDir(ncurses.Name()),
+			"-I" + config.IncludeDir(libevent),
+			"-I" + config.IncludeDir(ncurses),
 		},
 		LdFlags: []string{
-			"-L" + config.LibDir(libevent.Name()),
-			"-L" + config.LibDir(ncurses.Name()),
+			"-L" + config.LibDir(libevent),
+			"-L" + config.LibDir(ncurses),
 		},
 		PkgConfigPaths: []string{
-			filepath.Join(config.InstallDir(ncurses.Name()), "share", "pkgconfig"),
+			filepath.Join(config.InstallDir(ncurses), "share", "pkgconfig"),
 		},
 	}.Cmd()
 	configure.Env = append(
@@ -54,12 +54,15 @@ func (tmux Tmux) Install(config gogurt.Config) error {
 	make := gogurt.MakeCmd{
 		Args: []string{
 			"install",
-			"prefix=" + config.InstallDir(tmux.Name()),
+			"prefix=" + config.InstallDir(tmux),
 		},
 	}.Cmd()
 	return make.Run()
 }
 
-func (tmux Tmux) Dependencies() []string {
-	return []string{"libevent", "ncurses"}
+func (tmux Tmux) Dependencies() []gogurt.Package {
+	return []gogurt.Package{
+		Libevent{},
+		Ncurses{},
+	}
 }

@@ -28,22 +28,22 @@ type Config struct {
 
 }
 
-func (config Config) BuildDir(packageName string) string {
-  return filepath.Join(config.BuildFolder, packageName, config.PackageVersions[packageName])
+func (config Config) BuildDir(p Package) string {
+  return filepath.Join(config.BuildFolder, p.Name(), config.PackageVersions[p.Name()])
 }
 
-func (config Config) InstallDir(packageName string) string {
-  return filepath.Join(config.InstallFolder, packageName, config.PackageVersions[packageName])
+func (config Config) InstallDir(p Package) string {
+  return filepath.Join(config.InstallFolder, p.Name(), config.PackageVersions[p.Name()])
 }
 
-func (config Config) BinDir(packageName string) string {
-	return filepath.Join(config.InstallDir(packageName), "bin")
+func (config Config) BinDir(p Package) string {
+	return filepath.Join(config.InstallDir(p), "bin")
 }
 
-func (config Config) IncludeDir(packageName string) string {
-	return filepath.Join(config.InstallDir(packageName), "include")
+func (config Config) IncludeDir(p Package) string {
+	return filepath.Join(config.InstallDir(p), "include")
 }
 
-func (config Config) LibDir(packageName string) string {
-	return filepath.Join(config.InstallDir(packageName), "lib")
+func (config Config) LibDir(p Package) string {
+	return filepath.Join(config.InstallDir(p), "lib")
 }

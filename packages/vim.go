@@ -43,7 +43,7 @@ func (vim Vim) Build(config gogurt.Config) error {
 			"--enable-cscope",
 			"--enable-rubyinterp", // TODO: Need to install ruby.
 			"--enable-pythoninterp",
-			"--with-python-config-dir=" + filepath.Join(config.LibDir(python2.Name()), "python2.7", "config"), // TODO: Get major the version out of the config.
+			"--with-python-config-dir=" + filepath.Join(config.LibDir(python2), "python2.7", "config"), // TODO: Get major the version out of the config.
 			"--enable-luainterp",
 			"--disable-darwin",
 			"--disable-gui",
@@ -53,20 +53,20 @@ func (vim Vim) Build(config gogurt.Config) error {
 		},
 		CFlags: []string{
 			"-Os", // Vim tries to compile with _FORTIFY_SOURCE, which requires -O
-			"-I" + config.IncludeDir("openssl"),
-			"-I" + config.IncludeDir("ncurses"),
-			"-I" + config.IncludeDir("python2"),
-			"-I" + filepath.Join(config.IncludeDir(python2.Name()), "python2.7"),
+			"-I" + config.IncludeDir(openssl),
+			"-I" + config.IncludeDir(ncurses),
+			"-I" + config.IncludeDir(python2),
+			"-I" + filepath.Join(config.IncludeDir(python2), "python2.7"),
 		},
 		CppFlags: []string{
-			"-I" + config.IncludeDir(ncurses.Name()),
+			"-I" + config.IncludeDir(ncurses),
 		},
 		LdFlags: []string{
 			"-static",
-			"-L" + config.LibDir(ncurses.Name()),
-			"-L" + config.LibDir(python2.Name()),
-			"-L" + config.LibDir(openssl.Name()),
-			"-L" + config.LibDir(zlib.Name()),
+			"-L" + config.LibDir(ncurses),
+			"-L" + config.LibDir(python2),
+			"-L" + config.LibDir(openssl),
+			"-L" + config.LibDir(zlib),
 		},
 		Libs: []string{
 			"-lncursesw",
@@ -78,7 +78,7 @@ func (vim Vim) Build(config gogurt.Config) error {
 			"-lz",
 		},
 		Paths: []string{
-			config.BinDir(python2.Name()), // We want our static Python2 to be picked up.
+			config.BinDir(python2), // We want our static Python2 to be picked up.
 		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
@@ -94,16 +94,16 @@ func (vim Vim) Install(config gogurt.Config) error {
 	makeInstall := gogurt.MakeCmd{
 		Args: []string{
 			"install",
-			"prefix=" + config.InstallDir(vim.Name()),
+			"prefix=" + config.InstallDir(vim),
 		},
 	}.Cmd()
 	return makeInstall.Run()
 }
 
-func (vim Vim) Dependencies() []string {
-	return []string{
-		"ncurses",
-		"python2",
+func (vim Vim) Dependencies() []gogurt.Package {
+	return []gogurt.Package{
+		Ncurses{},
+		Python2{},
 	}
 }
 

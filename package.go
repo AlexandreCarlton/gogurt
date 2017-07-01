@@ -11,5 +11,5 @@ type Package interface {
 	Install(config Config) error
 	// Clean() int
 
-	Dependencies() []string
+	Dependencies() []Package
 }
