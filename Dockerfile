@@ -9,6 +9,7 @@ RUN yum --assumeyes update \
          libstdc++-static \
          cmake \
          sudo \
+         texinfo \
     && yum clean all
 
 RUN useradd $user --create-home

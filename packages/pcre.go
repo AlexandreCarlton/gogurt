@@ -28,6 +28,7 @@ func (pcre Pcre) Build(config gogurt.Config) error {
 			"--enable-pcre16",
 			"--enable-pcre32",
 			"--enable-pcregrep-libz",
+			"--enable-pcregrep-libbz2",
 			"--enable-jit",
 		},
 		CFlags: []string{
@@ -38,11 +39,19 @@ func (pcre Pcre) Build(config gogurt.Config) error {
 			"-L" + config.LibDir(zlib),
 			"-L" + config.LibDir(bzip2),
 		},
+		Paths: []string{
+			config.BinDir(AutoMake{}),
+		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
 		return err
 	}
-	make := gogurt.MakeCmd{Jobs: config.NumCores}.Cmd()
+	make := gogurt.MakeCmd{
+		Jobs: config.NumCores,
+		Paths: []string{
+			config.BinDir(AutoMake{}),
+		},
+	}.Cmd()
 	return make.Run()
 }
 
