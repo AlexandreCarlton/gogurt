@@ -8,6 +8,7 @@ RUN yum --assumeyes update \
          glibc-static \
          libstdc++-static \
          cmake \
+         perl-ExtUtils-MakeMaker \
          sudo \
          texinfo \
     && yum clean all
