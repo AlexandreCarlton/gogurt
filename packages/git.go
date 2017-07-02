@@ -24,8 +24,6 @@ func (git Git) Build(config gogurt.Config) error {
 	if err := makeConfigure.Run(); err != nil {
 		return err
 	}
-	// TODO It's somehow getting NO_CURL=YesPlease in config.mak.autogen
-	// Something's off with curl maybe?
 	gogurt.ReplaceInFile("Makefile", "-lssl", "-lssl -ldl -lz")
 	gogurt.ReplaceInFile("Makefile", "-lcrypto", "-lcrypto -ldl -lz")
 
@@ -37,12 +35,15 @@ func (git Git) Build(config gogurt.Config) error {
 			"--with-openssl=" + config.InstallDir(OpenSSL{}),
 			"--with-zlib=" + config.InstallDir(Zlib{}),
 		},
+		// We need to add these so that curl's dependencies (ssl, libz) are picked up,
+		// otherwise we don't get cloning via http[s].
 		CFlags: []string{
 			"-I" + config.IncludeDir(Curl{}),
 			"-I" + config.IncludeDir(OpenSSL{}),
 			"-I" + config.IncludeDir(Zlib{}),
 		},
 		LdFlags: []string{
+			"-static",
 			"-L" + config.LibDir(Curl{}),
 			"-L" + config.LibDir(OpenSSL{}),
 			"-L" + config.LibDir(Zlib{}),
@@ -61,9 +62,9 @@ func (git Git) Build(config gogurt.Config) error {
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
 		Args: []string{
-			"NEEDS_SSL_WITH_CURL=YesPlease", // so we get SSL with curl
-			"NEEDS_CRYPTO_WITH_SSL=YesPlease", // So we have -ldl attached.
-			"NEEDS_SSL_WITH_CRYPTO=YesPlease", // Probably not necessary, but who knows.
+			"NEEDS_SSL_WITH_CURL=YesPlease", // so we get -lssl with curl
+			"NEEDS_CRYPTO_WITH_SSL=YesPlease",
+			"NEEDS_SSL_WITH_CRYPTO=YesPlease",
 		},
 	}.Cmd()
 	return make.Run()
