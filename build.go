@@ -53,12 +53,17 @@ type MakeCmd struct {
 	Jobs uint
 
 	Args []string
+
+	Paths []string
 }
 
 func (makeCmd MakeCmd) Cmd() *exec.Cmd {
 	jobs := int(math.Max(1, float64(makeCmd.Jobs)))
 	args := append(makeCmd.Args, "--jobs=" + strconv.Itoa(jobs))
 	cmd := exec.Command("make", args...)
+	cmd.Env = []string{
+		"PATH=" + strings.Join(makeCmd.Paths, ":") + ":" + os.Getenv("PATH"),
+	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd
