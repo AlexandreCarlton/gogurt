@@ -32,13 +32,17 @@ func main() {
 		NumCores: 3,
 		// TODO We'll have a set of default versions, and our config will override the defaults.
 		PackageVersions: map[string]string {
+			"autoconf": "2.69",
+			"automake": "1.15",
 			"bzip2": "1.0.6",
 			"gettext": "0.19.8",
+			"fish": "2.6.0",
 			"libevent": "2.1.8-stable",
 			"ncurses": "6.0",
 			"openssl": "1.0.2k",
 			"pcre": "8.40",
 			"python2": "2.7.5",
+			"texinfo": "6.3",
 			"tmux": "2.5",
 			"zlib": "1.2.11",
 			"libffi": "3.2.1",
@@ -46,17 +50,12 @@ func main() {
 		},
 	}
 
-	name := "gettext"
-	installPackage(name, config)
-}
-
-func installPackage(name string, config gogurt.Config) {
-
-	// TODO: Implement reflection?
-	// Nah, do this, allows for aliases
-	// e.g. can use 'ag' for 'the_silver_searcher'
+	name := os.Args[1]
 	mappings := map[string]gogurt.Package{
+		"autoconf": packages.AutoConf{},
+		"automake": packages.AutoMake{},
 		"bzip2": packages.Bzip2{},
+		"fish": packages.Fish{},
 		"gettext" : packages.GetText{},
 		"libevent": packages.Libevent{},
 		"libffi": packages.LibFFI{},
@@ -65,27 +64,32 @@ func installPackage(name string, config gogurt.Config) {
 		"python2": packages.Python2{},
 		"ncurses": packages.Ncurses{},
 		"tmux": packages.Tmux{},
+		"texinfo": packages.TexInfo{},
 		"vim": packages.Vim{},
 		"zlib": packages.Zlib{},
 	}
+	pac := mappings[name]
 
-	if _, err := os.Stat(config.InstallDir(name)); err == nil {
-		log.Printf("Package '%s' already installed, skipping.", name)
+	installPackage(pac, config)
+}
+
+func installPackage(pac gogurt.Package, config gogurt.Config) {
+
+	if _, err := os.Stat(config.InstallDir(pac)); err == nil {
+		log.Printf("Package '%s' already installed, skipping.", pac.Name())
 		return
 	}
-
-	pac := mappings[name]
 
 	for _, dependency := range pac.Dependencies() {
 		installPackage(dependency, config)
 	}
-	version := config.PackageVersions[name]
+	version := config.PackageVersions[pac.Name()]
 
 	// Download tarball
 	url := pac.URL(version)
 	// TODO: This assumes we have a tarball. Should account for this.
 	extension := filepath.Ext(url)
-	cacheFilename := filepath.Join(config.CacheFolder, name, name + "-" + version  + ".tar" + extension)
+	cacheFilename := filepath.Join(config.CacheFolder, pac.Name(), pac.Name() + "-" + version  + ".tar" + extension)
 	if err := os.MkdirAll(filepath.Dir(cacheFilename), os.ModePerm); err != nil {
 		log.Fatalf("Error creating cache directory '%s': %s", config.CacheFolder, err.Error())
 	}
@@ -95,17 +99,17 @@ func installPackage(name string, config gogurt.Config) {
 		log.Fatalf("Could not download url '%s' to file '%s': %s\n", url, cacheFilename, err.Error())
 	}
 
-	buildDirname := config.BuildDir(name)
+	buildDirname := config.BuildDir(pac)
 	extractCompressedTar(cacheFilename, buildDirname)
 
 	if err := os.Chdir(buildDirname); err != nil {
 		log.Fatalf("Error changing to directory '%s': %s", buildDirname, err.Error())
 	}
 	if err := pac.Build(config); err != nil {
-		log.Fatalf("Error building package '%s': %s", name, err.Error())
+		log.Fatalf("Error building package '%s': %s", pac.Name(), err.Error())
 	}
 	if err := pac.Install(config); err != nil {
-		log.Fatalf("Error installing package '%s': %s", name, err.Error())
+		log.Fatalf("Error installing package '%s': %s", pac.Name(), err.Error())
 	}
 }
 
