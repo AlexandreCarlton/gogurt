@@ -4,6 +4,7 @@ package gogurt
 // TODO: Have RunCmds(exec.Command...) and it just runs through all in sequence, stopping if one errors.
 
 import (
+	"fmt"
 	"math"
 	"os"
 	"os/exec"
@@ -68,3 +69,32 @@ func (makeCmd MakeCmd) Cmd() *exec.Cmd {
 	cmd.Stderr = os.Stderr
 	return cmd
 }
+
+type CMakeCmd struct {
+	Prefix string
+
+	SourceDir string
+
+	BuildDir string
+
+	CacheEntries map[string]string
+
+	// Generator string // TODO: Add once we get Ninja
+
+	CFlags []string
+}
+
+func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
+	cacheEntries := []string{
+		"-DCMAKE_INSTALL_PREFIX=" + cmakeCmd.Prefix,
+	}
+	for key, value := range cmakeCmd.CacheEntries {
+		cacheEntries = append(cacheEntries, fmt.Sprintf("-D%s=%s", key, value))
+	}
+
+	cmd := exec.Command("cmake", strings.Join(cacheEntries, " "), cmakeCmd.SourceDir)
+	cmd.Dir = cmakeCmd.BuildDir
+	fmt.Println(cmd)
+	return cmd
+}
+
