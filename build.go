@@ -93,6 +93,8 @@ func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
 	}
 
 	cmd := exec.Command("cmake", strings.Join(cacheEntries, " "), cmakeCmd.SourceDir)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	cmd.Dir = cmakeCmd.BuildDir
 	fmt.Println(cmd)
 	return cmd
