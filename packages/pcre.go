@@ -32,6 +32,7 @@ func (pcre Pcre) Build(config gogurt.Config) error {
 			"--enable-jit",
 		},
 		CFlags: []string{
+			"-fPIC", // EditorConfig tries to build a shared lib, which requires a
 			"-I" + config.IncludeDir(zlib),
 			"-I" + config.IncludeDir(bzip2),
 		},
