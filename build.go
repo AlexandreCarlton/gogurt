@@ -20,6 +20,8 @@ type ConfigureCmd struct {
 
 	CppFlags []string
 
+	CxxFlags []string
+
 	LdFlags []string
 
 	Libs []string
@@ -35,6 +37,7 @@ func (configure ConfigureCmd) Cmd() *exec.Cmd {
 	cmd.Env = []string{
 		"CFLAGS=" + strings.Join(configure.CFlags, " "),
 		"CPPFLAGS=" + strings.Join(configure.CppFlags, " "),
+		"CXXFLAGS=" + strings.Join(configure.CxxFlags, " "),
 		"LDFLAGS=" + strings.Join(configure.LdFlags, " "),
 		"LIBS=" + strings.Join(configure.Libs, " "),
 		"PATH=" + strings.Join(configure.Paths, ":") + ":" + os.Getenv("PATH"),
