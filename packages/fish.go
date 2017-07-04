@@ -5,6 +5,21 @@ import (
 	"github.com/alexandrecarlton/gogurt"
 )
 
+// This does not produce a "pure" static fish; it still has dependencies on
+// system libraries:
+//   linux-vdso.so.1
+//   libdl.so.2 => /lib64/libdl.so.2
+//   libpthread.so.0 => /lib64/libpthread.so.0
+//   librt.so.1 => /lib64/librt.so.1
+//   libstdc++.so.6 => /lib64/libstdc++.so.6
+//   libm.so.6 => /lib64/libm.so.6
+//   libgcc_s.so.1 => /lib64/libgcc_s.so.1
+//   libc.so.6 => /lib64/libc.so.6
+//   /lib64/ld-linux-x86-64.so.2
+// The reason for this is that we still need a dependency on getpwnam_r, so that
+// fish doesn't crash if it tries to expand ~.
+// TODO: Revisit this issue once we are using musl.
+
 type Fish struct{}
 
 func (fish Fish) Name() string {
@@ -28,7 +43,6 @@ func (fish Fish) Build(config gogurt.Config) error {
 			"-I" + config.IncludeDir(Ncurses{}),
 		},
 		LdFlags: []string{
-			"-static",
 			"-L" + config.LibDir(Ncurses{}),
 		},
 		Libs: []string{
