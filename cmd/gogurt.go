@@ -23,12 +23,14 @@ import (
 
 func main() {
 
+	// TODO: Create a default config object, merge that in.
+	// TODO: look at mitchellh's homedir instead of using os.GetEnv(HOME)
 	// TODO: Viper this.
 	config := gogurt.Config{
-		Prefix: "/home/alexandre/.local",
-		CacheFolder: "/home/alexandre/.cache/gogurt",
-		BuildFolder: "/home/alexandre/.gogurt/build",
-		InstallFolder: "/home/alexandre/.gogurt/install",
+		Prefix: filepath.Join(os.Getenv("HOME"), ".local"),
+		CacheFolder: filepath.Join(os.Getenv("HOME"), ".cache/gogurt"),
+		BuildFolder: filepath.Join(os.Getenv("HOME"),  ".gogurt/build"),
+		InstallFolder: filepath.Join(os.Getenv("HOME"), ".gogurt/install"),
 		NumCores: 3,
 		// TODO We'll have a set of default versions, and our config will override the defaults.
 		PackageVersions: map[string]string {
