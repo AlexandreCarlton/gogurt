@@ -55,6 +55,8 @@ type MakeCmd struct {
 
 	Args []string
 
+	Dir string
+
 	Paths []string
 }
 
@@ -64,6 +66,9 @@ func (makeCmd MakeCmd) Cmd() *exec.Cmd {
 	cmd := exec.Command("make", args...)
 	cmd.Env = []string{
 		"PATH=" + strings.Join(makeCmd.Paths, ":") + ":" + os.Getenv("PATH"),
+	}
+	if len(makeCmd.Dir) > 0 {
+		cmd.Dir = makeCmd.Dir
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -85,8 +90,9 @@ type CMakeCmd struct {
 }
 
 func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
-	cacheEntries := []string{
-		"-DCMAKE_INSTALL_PREFIX=" + cmakeCmd.Prefix,
+	cacheEntries := make([]string, 1)
+	if len(cmakeCmd.Prefix) > 0 {
+		cacheEntries = append(cacheEntries, "-DCMAKE_INSTALL_PREFIX=" + cmakeCmd.Prefix,)
 	}
 	for key, value := range cmakeCmd.CacheEntries {
 		cacheEntries = append(cacheEntries, fmt.Sprintf("-D%s=%s", key, value))
