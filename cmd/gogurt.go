@@ -49,6 +49,7 @@ func main() {
 			"stow": "2.2.2",
 			"texinfo": "6.3",
 			"tmux": "2.5",
+			"universal-ctags": "b5c9b76",
 			"zlib": "1.2.11",
 			"libffi": "3.2.1",
 			"vim": "8.0.0045",
@@ -74,6 +75,7 @@ func main() {
 		"stow": packages.Stow{},
 		"tmux": packages.Tmux{},
 		"texinfo": packages.TexInfo{},
+		"universal-ctags": packages.UniversalCTags{},
 		"vim": packages.Vim{},
 		"zlib": packages.Zlib{},
 	}
