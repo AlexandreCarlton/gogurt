@@ -8,6 +8,7 @@ RUN yum --assumeyes update \
          glibc-static \
          libstdc++-static \
          cmake \
+         help2man \
          man-db \
          perl-ExtUtils-MakeMaker \
          sudo \
