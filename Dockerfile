@@ -13,6 +13,8 @@ RUN yum --assumeyes update \
          perl-ExtUtils-MakeMaker \
          sudo \
          texinfo \
+         texinfo-tex \
+         texi2html \
     && yum clean all
 
 RUN useradd $user --create-home

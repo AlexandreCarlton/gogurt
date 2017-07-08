@@ -49,4 +49,3 @@ func (texinfo TexInfo) Dependencies() []gogurt.Package {
 		AutoMake{},
 	}
 }
-
