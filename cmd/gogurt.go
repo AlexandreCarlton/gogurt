@@ -139,9 +139,15 @@ func downloadFile(url string, destinationFilename string) error {
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	// Follow redirects. TODO - clean up.
+	finalUrl := response.Request.URL.String()
+	redirectedResponse, err := http.Get(finalUrl)
+	if err != nil {
+		return err
+	}
+	defer redirectedResponse.Body.Close()
 
-	_, err = io.Copy(destination, response.Body)
+	_, err = io.Copy(destination, redirectedResponse.Body)
 	if err != nil {
 		return err
 	}
