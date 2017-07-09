@@ -42,7 +42,7 @@ func (configure ConfigureCmd) Cmd() *exec.Cmd {
 		"LDFLAGS=" + strings.Join(configure.LdFlags, " "),
 		"LIBS=" + strings.Join(configure.Libs, " "),
 		"PATH=" + strings.Join(configure.Paths, ":") + ":" + os.Getenv("PATH"),
-		"PKG_CONFIG_PATHS=" + strings.Join(configure.PkgConfigPaths, ":"),
+		"PKG_CONFIG_PATH=" + strings.Join(configure.PkgConfigPaths, ":"),
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
