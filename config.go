@@ -47,3 +47,11 @@ func (config Config) IncludeDir(p Package) string {
 func (config Config) LibDir(p Package) string {
 	return filepath.Join(config.InstallDir(p), "lib")
 }
+
+func (config Config) PkgConfigLibDir(p Package) string {
+	return filepath.Join(config.LibDir(p), "pkgconfig")
+}
+
+func (config Config) PkgConfigShareDir(p Package) string {
+	return filepath.Join(config.InstallDir(p), "share", "pkgconfig")
+}
