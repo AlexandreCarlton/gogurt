@@ -53,10 +53,11 @@ func main() {
 			"the_silver_searcher": "2.0.0",
 			"tmux": "2.5",
 			"universal-ctags": "b5c9b76",
-			"zlib": "1.2.11",
 			"libffi": "3.2.1",
 			"xz": "5.2.3",
 			"vim": "8.0.0045",
+			"zsh": "5.3.1",
+			"zlib": "1.2.11",
 		},
 	}
 
@@ -86,6 +87,7 @@ func main() {
 		"vim": packages.Vim{},
 		"xz": packages.XZ{},
 		"zlib": packages.Zlib{},
+		"zsh": packages.Zsh{},
 	}
 	pac := mappings[name]
 
