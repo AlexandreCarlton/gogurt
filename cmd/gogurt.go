@@ -46,6 +46,7 @@ func main() {
 			"libtool": "2.4.6",
 			"ncurses": "6.0",
 			"neovim": "0.2.0",
+			"nodejs": "8.1.3",
 			"openssl": "1.0.2k",
 			"pcre": "8.40",
 			"python2": "2.7.5",
@@ -81,6 +82,7 @@ func main() {
 		"pcre": packages.Pcre{},
 		"python2": packages.Python2{},
 		"ncurses": packages.Ncurses{},
+		"nodejs": packages.NodeJS{},
 		"stow": packages.Stow{},
 		"texinfo": packages.TexInfo{},
 		"the_silver_searcher": packages.TheSilverSearcher{},
@@ -225,6 +227,9 @@ func extractTar(file io.Reader, dir string) error {
 			}()
 		case tar.TypeDir:
 			os.MkdirAll(newFilename, os.ModePerm)
+		case tar.TypeSymlink:
+			source := filepath.Join(dir, strings.Join(strings.Split(header.Linkname, "/")[1:], "/"))
+			os.Symlink(source, newFilename)
 		default:
 			log.Println("Header is ", header)
 			log.Println("Typeflag is ", header.Typeflag)
