@@ -38,3 +38,10 @@ func ReplaceInFile(fileName, pattern, repl string) error {
 
 	// return nil
 }
+
+// CopyFile recursively copies the src to the dest, overwriting it if it already exists.
+// TODO: Make into a purely go function, not shelled out to 'cp -rf'.
+func CopyFile(src, dest string) error {
+	cmd := exec.Command("cp", "--recursive", "--force" , src, dest)
+	return cmd.Run()
+}
