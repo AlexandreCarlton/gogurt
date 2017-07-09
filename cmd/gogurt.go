@@ -53,6 +53,7 @@ func main() {
 			"universal-ctags": "b5c9b76",
 			"zlib": "1.2.11",
 			"libffi": "3.2.1",
+			"xz": "5.2.3",
 			"vim": "8.0.0045",
 		},
 	}
@@ -79,6 +80,7 @@ func main() {
 		"texinfo": packages.TexInfo{},
 		"universal-ctags": packages.UniversalCTags{},
 		"vim": packages.Vim{},
+		"xz": packages.XZ{},
 		"zlib": packages.Zlib{},
 	}
 	pac := mappings[name]
