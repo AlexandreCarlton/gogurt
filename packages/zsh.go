@@ -27,6 +27,10 @@ func (zsh Zsh) Build(config gogurt.Config) error {
 			"-I" + config.IncludeDir(Pcre{}),
 			"-I" + config.IncludeDir(Ncurses{}),
 		},
+		CppFlags: []string{
+			"-I" + config.IncludeDir(Pcre{}),
+			"-I" + config.IncludeDir(Ncurses{}),
+		},
 		LdFlags: []string{
 			"-L" + config.LibDir(Pcre{}),
 			"-L" + config.LibDir(Ncurses{}),
@@ -34,6 +38,9 @@ func (zsh Zsh) Build(config gogurt.Config) error {
 		Libs: []string{
 			"-lpcre",
 			"-ltinfow",
+		},
+		Paths: []string{
+			config.BinDir(Pcre{}),
 		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
@@ -50,6 +57,7 @@ func (zsh Zsh) Install(config gogurt.Config) error {
 
 func (zsh Zsh) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-
+		Ncurses{},
+		Pcre{},
 	}
 }
