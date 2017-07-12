@@ -12,7 +12,7 @@ func (mpfr MPFR) Name() string {
 }
 
 func (mpfr MPFR) URL(version string) string {
-	return fmt.Sprintf("http://www.mpfr.org/mpfr-%s/mpfr-%s.tar.gz", version, version)
+	return fmt.Sprintf("https://ftp.gnu.org/gnu/mpfr/mpfr-%s.tar.gz", version)
 }
 
 func (mpfr MPFR) Build(config gogurt.Config) error {
