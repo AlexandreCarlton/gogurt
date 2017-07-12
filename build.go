@@ -30,6 +30,8 @@ type ConfigureCmd struct {
 	Paths []string
 
 	PkgConfigPaths []string
+
+	Dir string
 }
 
 func (configure ConfigureCmd) Cmd() *exec.Cmd {
@@ -43,6 +45,9 @@ func (configure ConfigureCmd) Cmd() *exec.Cmd {
 		"LIBS=" + strings.Join(configure.Libs, " "),
 		"PATH=" + strings.Join(configure.Paths, ":") + ":" + os.Getenv("PATH"),
 		"PKG_CONFIG_PATH=" + strings.Join(configure.PkgConfigPaths, ":"),
+	}
+	if len(configure.Dir) > 0 {
+		cmd.Dir = configure.Dir
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
