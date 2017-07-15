@@ -22,17 +22,19 @@ func (gcc GCC) URL(version string) string {
 func (gcc GCC) Build(config gogurt.Config) error {
 	buildDir := filepath.Join(config.BuildDir(gcc), "build")
 	os.MkdirAll(buildDir, 0755)
-
+  // A lot of the options aren't documented in the root ./configure --help.
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.InstallDir(gcc),
 		Args: []string{
+			"--disable-shared",
+			"--enable-static",
+			"--disable-libada",
+			"--disable-multilib", // we're not supporting 32-bit systems.
+			"--enable-languages=c,c++",
 			"--with-gmp=" + config.InstallDir(GMP{}),
 			"--with-mpfr=" + config.InstallDir(MPFR{}),
 			"--with-mpc=" + config.InstallDir(MPC{}),
 			// "--with-system-zlib", // can't seem to link in our own. :/
-			"--disable-libada",
-			"--disable-multilib", // no need for 32 bit support
-			"--enable-languages=c,c++", // This isn't documented in ./configure --help. Huh.
 		},
 		Dir: buildDir,
 		CFlags: []string{
