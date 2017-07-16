@@ -77,7 +77,27 @@ func (ncurses Ncurses) Build(config gogurt.Config) error {
 
 func (ncurses Ncurses) Install(config gogurt.Config) error {
 	make := gogurt.MakeCmd{Args: []string{"install"}}.Cmd()
-	return make.Run()
+	if err := make.Run(); err != nil {
+		return err
+	}
+	if err := createNonWideSymlinks(config.LibDir(ncurses), "w.a", ".a"); err != nil {
+		return nil
+	}
+	return createNonWideSymlinks(config.PkgConfigShareDir(ncurses), "w.pc", ".pc")
+}
+
+// Many applications still expect the regular, non-wide libraries.
+// We therefore create symlinks of them pointing to their wide equivalents.
+func createNonWideSymlinks(directory, oldSuffix, newSuffix string) error {
+	return filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+		if strings.HasSuffix(path, oldSuffix) {
+			 nonWideLink := strings.TrimSuffix(path, oldSuffix) + newSuffix
+			if err := os.Symlink(path, nonWideLink); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (ncurses Ncurses) Dependencies() []gogurt.Package {
@@ -89,7 +109,6 @@ func (ncurses Ncurses) Dependencies() []gogurt.Package {
 // # capabilities, not used as standalone entries.
 // Now, when we create fallback.c The '+' and '-' are replaced with '_', leading to multiple definitions.
 // For now, we omit entries containing '+'
-
 func getTerminals(config gogurt.Config) ([]string, error) {
 	ncurses := Ncurses{}
 	termInfoFile, err := os.Open(filepath.Join(config.BuildDir(ncurses), "misc", "terminfo.src"))
