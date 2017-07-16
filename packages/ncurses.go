@@ -67,6 +67,9 @@ func (ncurses Ncurses) Build(config gogurt.Config) error {
 			"--disable-db-install", // suppress install of terminal database
 			"--with-pkg-config-libdir=" + config.InstallDir(ncurses) + "/share/pkgconfig",
 		},
+		CFlags: []string{
+			"-fPIC",
+		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
 		return err
