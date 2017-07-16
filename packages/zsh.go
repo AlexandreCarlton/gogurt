@@ -19,9 +19,10 @@ func (zsh Zsh) Build(config gogurt.Config) error {
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.InstallDir(zsh),
 		Args: []string{
+			"--enable-cap",
 			"--enable-pcre",
 			"--enable-multibyte",
-			"--disable-dynamic",
+			"--with-term-lib=tinfow",
 		},
 		CFlags: []string{
 			"-I" + config.IncludeDir(Pcre{}),
@@ -34,10 +35,6 @@ func (zsh Zsh) Build(config gogurt.Config) error {
 		LdFlags: []string{
 			"-L" + config.LibDir(Pcre{}),
 			"-L" + config.LibDir(Ncurses{}),
-		},
-		Libs: []string{
-			"-lpcre",
-			"-ltinfow",
 		},
 		Paths: []string{
 			config.BinDir(Pcre{}),
