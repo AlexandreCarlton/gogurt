@@ -79,11 +79,15 @@ func (python2 Python2) Build(config gogurt.Config) error {
 		},
 		CFlags: []string{
 			"-I" + config.IncludeDir(zlib),
+			"-I" + config.IncludeDir(OpenSSL{}),
 		},
 		LdFlags: []string{
 			"-L" + config.LibDir(zlib),
+			"-L" + config.LibDir(OpenSSL{}),
 		},
 		Libs: []string{
+			"-lssl",
+			"-lcrypto",
 			"-lz",
 		},
 	}.Cmd();
