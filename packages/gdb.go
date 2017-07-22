@@ -51,27 +51,31 @@ func (gdb GDB) Build(config gogurt.Config) error {
 			"--with-libexpat",
 			"--with-libexpat-prefix=" + config.InstallDir(Expat{}),
 			//"--with-system-zlib",
-			//"--with-system-readline",
+			"--with-system-readline",
 		},
 		CFlags: []string{
 			"-I" + config.IncludeDir(Ncurses{}),
+			"-I" + config.IncludeDir(ReadLine{}),
 			"-I" + config.IncludeDir(Zlib{}),
-			// These are so that we can statically link Python.
-			"-I" + config.IncludeDir(OpenSSL{}),
 		},
 		CxxFlags: []string{
 			"-I" + config.IncludeDir(Ncurses{}),
+			"-I" + config.IncludeDir(ReadLine{}),
 			"-I" + config.IncludeDir(Zlib{}),
-			// These are so that we can statically link Python.
-			"-I" + config.IncludeDir(OpenSSL{}),
 		},
 		LdFlags: []string{
 			"-L" + config.LibDir(Ncurses{}),
 			"-L" + config.LibDir(Zlib{}),
-			// For Python.
+			// For linking of Python.
+			"-L" + config.LibDir(Python2{}),
+			"-L" + config.LibDir(ReadLine{}),
 			"-L" + config.LibDir(OpenSSL{}),
+			"-L" + config.LibDir(Expat{}),
+			"-L" + config.LibDir(LibFFI{}),
+			"-L" + config.LibDir(Zlib{}),
 		},
 		Libs: []string{
+			"-lreadline",
 			"-ltinfow",
 		},
 	}.Cmd()

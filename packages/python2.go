@@ -109,8 +109,12 @@ func (python2 Python2) Build(config gogurt.Config) error {
 			"-L" + config.LibDir(ReadLine{}),
 			"-L" + config.LibDir(Zlib{}),
 		},
+		// While not necessary to build Python, these are recorded used in building applications using Python (e.g. GDB).
 		Libs: []string{
+			"-lffi",
 			"-lexpat",
+			"-lreadline",
+			"-ltinfow",
 			"-lssl",
 			"-lcrypto",
 			"-lz",
