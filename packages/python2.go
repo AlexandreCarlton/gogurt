@@ -36,7 +36,6 @@ func (python2 Python2) Build(config gogurt.Config) error {
 		"_multiprocessing/multiprocessing.c",
 		"_multiprocessing/semaphore.c",
 		"_multiprocessing/socket_connection.c",
-		"-I./Modules/_multiprocessing", // TODO: Fix this.
 		"-IModules/_multiprocessing",
 	})
 	addModule("_ctypes", []string{
@@ -47,12 +46,12 @@ func (python2 Python2) Build(config gogurt.Config) error {
 		"_ctypes/_ctypes_test.c",
 		"_ctypes/malloc_closure.c",
 		"_ctypes/stgdict.c",
-		"-I./Modules/_ctypes", // TODO: Fix this.
 		"-IModules/_ctypes",
 		"-lffi",
 	})
 	uncommentModule("_bisect")
 	uncommentModule("_collections")
+	uncommentModule("_csv")
 	uncommentModule("_elementtree")
 	uncommentModule("_functools")
 	uncommentModule("_heapq")
@@ -92,6 +91,7 @@ func (python2 Python2) Build(config gogurt.Config) error {
 			"--enable-unicode=ucs4",
 			"--with-system-expat",
 			"--with-system-libffi",
+			"--with-ensurepip=install",
 		},
 		CFlags: []string{
 			"-I" + config.IncludeDir(Expat{}),
