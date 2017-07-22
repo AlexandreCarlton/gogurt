@@ -235,6 +235,8 @@ func extractTar(file io.Reader, dir string) error {
 		switch header.Typeflag {
 		case tar.TypeReg: fallthrough
 		case tar.TypeRegA:
+			dir := filepath.Dir(newFilename)
+			os.MkdirAll(dir, os.ModePerm)
 			func() {
 				newFile, _ := os.Create(newFilename)
 				defer newFile.Close()
