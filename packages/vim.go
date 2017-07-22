@@ -6,7 +6,6 @@ package packages
 // These files are in PREFIX/share/vim/vim<ver>. which is problematic if your prefix is in /home.
 // This is normally not a problem for personal use, but if your prefix is in /home then it is problematic to distribute this to your friends.
 // They'll need to set the environment variable VIMRUNTIME=<path/to>/share/vim/vim<ver>. Then everything should just work.
-//
 
 import (
 	"fmt"
@@ -27,10 +26,6 @@ func (vim Vim) URL(version string) string {
 
 func (vim Vim) Build(config gogurt.Config) error {
 
-	ncurses := Ncurses{}
-	openssl := OpenSSL{}
-	python2 := Python2{}
-	zlib := Zlib{}
 	//pythonMajorVersion := strings.Join(strings.Split(config.PackageVersions["python2"], ".")[:2], ".")
 
 	configure := gogurt.ConfigureCmd{
@@ -43,7 +38,7 @@ func (vim Vim) Build(config gogurt.Config) error {
 			"--enable-cscope",
 			"--enable-rubyinterp", // TODO: Need to install ruby.
 			"--enable-pythoninterp",
-			"--with-python-config-dir=" + filepath.Join(config.LibDir(python2), "python2.7", "config"), // TODO: Get major the version out of the config.
+			"--with-python-config-dir=" + filepath.Join(config.LibDir(Python2{}), "python2.7", "config"), // TODO: Get major the version out of the config.
 			"--enable-luainterp",
 			"--disable-darwin",
 			"--disable-gui",
@@ -53,32 +48,38 @@ func (vim Vim) Build(config gogurt.Config) error {
 		},
 		CFlags: []string{
 			"-Os", // Vim tries to compile with _FORTIFY_SOURCE, which requires -O
-			"-I" + config.IncludeDir(openssl),
-			"-I" + config.IncludeDir(ncurses),
-			"-I" + config.IncludeDir(python2),
-			"-I" + filepath.Join(config.IncludeDir(python2), "python2.7"),
+			"-I" + config.IncludeDir(OpenSSL{}),
+			"-I" + config.IncludeDir(Ncurses{}),
+			"-I" + config.IncludeDir(Python2{}),
 		},
 		CppFlags: []string{
-			"-I" + config.IncludeDir(ncurses),
+			"-I" + config.IncludeDir(Ncurses{}),
 		},
 		LdFlags: []string{
 			"-static",
-			"-L" + config.LibDir(ncurses),
-			"-L" + config.LibDir(python2),
-			"-L" + config.LibDir(openssl),
-			"-L" + config.LibDir(zlib),
+			"-L" + config.LibDir(Ncurses{}),
+			"-L" + config.LibDir(Python2{}),
+
+			// Included due to Vim's linking of Python.
+			"-L" + config.LibDir(OpenSSL{}),
+			"-L" + config.LibDir(Expat{}),
+			"-L" + config.LibDir(LibFFI{}),
+			"-L" + config.LibDir(ReadLine{}),
+			"-L" + config.LibDir(Zlib{}),
 		},
 		Libs: []string{
 			"-lncursesw",
 			"-ltinfow",
 			"-lpython2.7",
+			"-lffi",
+			"-lreadline",
 			"-lssl",
 			"-lcrypto",
 			"-ldl",
 			"-lz",
 		},
 		Paths: []string{
-			config.BinDir(python2), // We want our static Python2 to be picked up.
+			config.BinDir(Python2{}), // We want our static Python2 to be picked up.
 		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
