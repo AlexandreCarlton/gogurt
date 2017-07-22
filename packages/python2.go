@@ -22,10 +22,10 @@ func (python2 Python2) URL(version string) string {
 }
 
 func (python2 Python2) Build(config gogurt.Config) error {
-	openssl := OpenSSL{}
-	zlib := Zlib{}
+	// Termcap has been succeeded by terminfo.
+	gogurt.ReplaceInFile("Modules/Setup.dist", "termcap", "tinfow")
 
-	gogurt.ReplaceInFile("Modules/Setup.dist", "^#SSL=.*", "SSL=" + strings.Replace(config.InstallDir(openssl), "/", "\\/", -1))
+	gogurt.ReplaceInFile("Modules/Setup.dist", "^#SSL=.*", "SSL=" + strings.Replace(config.InstallDir(OpenSSL{}), "/", "\\/", -1))
 	uncommentModule("_ssl")
 	uncommentModule("\t-DUSE_SSL")
 	uncommentModule("\t-L\\$\\(SSL\\)") // TODO: Redo this section, these aren't modules.
@@ -38,6 +38,18 @@ func (python2 Python2) Build(config gogurt.Config) error {
 		"_multiprocessing/socket_connection.c",
 		"-I./Modules/_multiprocessing", // TODO: Fix this.
 		"-IModules/_multiprocessing",
+	})
+	addModule("_ctypes", []string{
+		"_ctypes/callbacks.c",
+		"_ctypes/callproc.c",
+		"_ctypes/cfield.c",
+		"_ctypes/_ctypes.c",
+		"_ctypes/_ctypes_test.c",
+		"_ctypes/malloc_closure.c",
+		"_ctypes/stgdict.c",
+		"-I./Modules/_ctypes", // TODO: Fix this.
+		"-IModules/_ctypes",
+		"-lffi",
 	})
 	uncommentModule("_bisect")
 	uncommentModule("_collections")
@@ -79,15 +91,20 @@ func (python2 Python2) Build(config gogurt.Config) error {
 			"--disable-shared",
 			"--enable-unicode=ucs4",
 			"--with-system-expat",
+			"--with-system-libffi",
 		},
 		CFlags: []string{
 			"-I" + config.IncludeDir(Expat{}),
+			"-I" + config.IncludeDir(LibFFI{}),
+			"-I" + config.IncludeDir(Ncurses{}),
 			"-I" + config.IncludeDir(OpenSSL{}),
 			"-I" + config.IncludeDir(ReadLine{}),
 			"-I" + config.IncludeDir(Zlib{}),
 		},
 		LdFlags: []string{
 			"-L" + config.LibDir(Expat{}),
+			"-L" + config.LibDir(LibFFI{}),
+			"-L" + config.LibDir(Ncurses{}),
 			"-L" + config.LibDir(OpenSSL{}),
 			"-L" + config.LibDir(ReadLine{}),
 			"-L" + config.LibDir(Zlib{}),
@@ -155,10 +172,11 @@ func (python2 Python2) Install(config gogurt.Config) error {
 func (python2 Python2) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
 		Expat{},
-		LibFFI{}, // On second thought, is libffi really necessary?
-		Zlib{},
+		LibFFI{},
+		Ncurses{},
 		OpenSSL{},
 		ReadLine{},
+		Zlib{},
 	}
 }
 
