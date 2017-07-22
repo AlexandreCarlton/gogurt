@@ -63,6 +63,7 @@ func (python2 Python2) Build(config gogurt.Config) error {
 	uncommentModule("itertools")
 	uncommentModule("math")
 	uncommentModule("operator")
+	uncommentModule("pyexpat")
 	uncommentModule("select")
 	uncommentModule("time")
 	uncommentModule("unicodedata")
@@ -76,16 +77,18 @@ func (python2 Python2) Build(config gogurt.Config) error {
 		Args: []string{
 			"--disable-shared",
 			"--enable-unicode=ucs4",
+			"--with-system-expat",
 		},
 		CFlags: []string{
-			"-I" + config.IncludeDir(zlib),
+			"-I" + config.IncludeDir(Expat{}),
 			"-I" + config.IncludeDir(OpenSSL{}),
 		},
 		LdFlags: []string{
-			"-L" + config.LibDir(zlib),
+			"-L" + config.LibDir(Expat{}),
 			"-L" + config.LibDir(OpenSSL{}),
 		},
 		Libs: []string{
+			"-lexpat",
 			"-lssl",
 			"-lcrypto",
 			"-lz",
@@ -146,6 +149,7 @@ func (python2 Python2) Install(config gogurt.Config) error {
 
 func (python2 Python2) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
+		Expat{},
 		LibFFI{}, // On second thought, is libffi really necessary?
 		Zlib{},
 		OpenSSL{},
