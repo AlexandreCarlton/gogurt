@@ -84,9 +84,12 @@ func (ncurses Ncurses) Install(config gogurt.Config) error {
 		return err
 	}
 	if err := createNonWideSymlinks(config.LibDir(ncurses), "w.a", ".a"); err != nil {
-		return nil
+		return err
 	}
-	return createNonWideSymlinks(config.PkgConfigShareDir(ncurses), "w.pc", ".pc")
+	if err := createNonWideSymlinks(config.PkgConfigShareDir(ncurses), "w.pc", ".pc"); err != nil {
+		return err
+	}
+	return createCursesSymlinks(config.LibDir(ncurses))
 }
 
 // Many applications still expect the regular, non-wide libraries.
@@ -96,6 +99,22 @@ func createNonWideSymlinks(directory, oldSuffix, newSuffix string) error {
 		if strings.HasSuffix(path, oldSuffix) {
 			 nonWideLink := strings.TrimSuffix(path, oldSuffix) + newSuffix
 			if err := os.Symlink(path, nonWideLink); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+}
+
+// Many applications still expect regular curses.
+// We therefore create symlinks of them pointing to their curses equivalents.
+// TODO: handle pkgconfig.
+func createCursesSymlinks(directory string) error {
+	return filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+		lib := filepath.Base(path)
+		if strings.HasPrefix(lib, "libn") {
+			cursesLink := filepath.Join(filepath.Dir(path), "lib" + strings.TrimPrefix(lib, "libn"))
+			if err := os.Symlink(path, cursesLink); err != nil {
 				return err
 			}
 		}
