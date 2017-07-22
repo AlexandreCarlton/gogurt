@@ -64,6 +64,7 @@ func (python2 Python2) Build(config gogurt.Config) error {
 	uncommentModule("math")
 	uncommentModule("operator")
 	uncommentModule("pyexpat")
+	uncommentModule("readline")
 	uncommentModule("select")
 	uncommentModule("time")
 	uncommentModule("unicodedata")
@@ -82,10 +83,14 @@ func (python2 Python2) Build(config gogurt.Config) error {
 		CFlags: []string{
 			"-I" + config.IncludeDir(Expat{}),
 			"-I" + config.IncludeDir(OpenSSL{}),
+			"-I" + config.IncludeDir(ReadLine{}),
+			"-I" + config.IncludeDir(Zlib{}),
 		},
 		LdFlags: []string{
 			"-L" + config.LibDir(Expat{}),
 			"-L" + config.LibDir(OpenSSL{}),
+			"-L" + config.LibDir(ReadLine{}),
+			"-L" + config.LibDir(Zlib{}),
 		},
 		Libs: []string{
 			"-lexpat",
@@ -153,6 +158,7 @@ func (python2 Python2) Dependencies() []gogurt.Package {
 		LibFFI{}, // On second thought, is libffi really necessary?
 		Zlib{},
 		OpenSSL{},
+		ReadLine{},
 	}
 }
 
