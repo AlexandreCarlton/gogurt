@@ -16,41 +16,30 @@ func (automake AutoMake) URL(version string) string {
 	return fmt.Sprintf("https://ftp.gnu.org/gnu/automake/automake-%s.tar.gz", version)
 }
 
+// We hit a slight problem here.
+// For some reason, a configure followed by a make would produce:
+// Can't locate <gogurt_build>/automake/1.15.1/bin/automake in @INC (@INC contains: /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5 .) at <gogurt_build>/automake/1.15.1/t/wrap/automake-1.15 line 27.
+// For this reason, we run bootstrap to regenerate the configure script.
+// However, this would require that the documentation is regenerated using texinfo (which requires a new version of automake). For this reason, we only build the executable scripts.
 func (automake AutoMake) Build(config gogurt.Config) error {
-	// This *shouldn't* be necessary but errors are generated without it.
-	bootstrap := exec.Command("./bootstrap.sh")
+	bootstrap := exec.Command("./bootstrap")
 	if err := bootstrap.Run(); err != nil {
 		return err
 	}
-
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.InstallDir(automake),
-		Args: []string{
-			// Disable documentation since we need texinfo, which depends on AutoMake.
-			"--disable-perl-api-texi-build",
-			"--disable-pod-simple-texinfo-tests",
-		},
-		Paths: []string{
-			config.BinDir(AutoConf{}),
-		},
 	}.Cmd()
-	if err := configure.Run(); err != nil {
-		return err
-	}
-
-	make := gogurt.MakeCmd{Jobs: config.NumCores}.Cmd()
-	return make.Run()
+	return configure.Run()
 }
 
 func (automake AutoMake) Install(config gogurt.Config) error {
-	makeInstall := gogurt.MakeCmd{Args: []string{"install"}}.Cmd()
+	makeInstall := gogurt.MakeCmd{Args: []string{"install-exec-am", "prefix=" + config.InstallDir(automake)}}.Cmd()
 	return makeInstall.Run()
 }
 
 func (automake AutoMake) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoConf{}, // doesn't really need it on centos 7
-		//TexInfo{}, // for documentation... But Texinfo Requires Automake with recent version.
+		AutoConf{},
 	}
 }
 
