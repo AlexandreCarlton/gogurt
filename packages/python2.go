@@ -77,6 +77,7 @@ func (python2 Python2) Build(config gogurt.Config) error {
 	uncommentModule("pyexpat")
 	uncommentModule("readline")
 	uncommentModule("select")
+	uncommentModule("termios")
 	uncommentModule("time")
 	uncommentModule("unicodedata")
 	uncommentModule("zlib")
