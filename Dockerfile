@@ -10,6 +10,7 @@ RUN yum --assumeyes update \
          cmake \
          man-db \
          perl-ExtUtils-MakeMaker \
+         python \
          sudo \
     && yum clean all
 
