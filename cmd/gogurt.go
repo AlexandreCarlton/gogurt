@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/tar"
+	"compress/bzip2"
 	"compress/gzip"
 
 	"io"
@@ -223,6 +224,9 @@ func extractCompressedTar(filename string, dir string) error {
 		if err != nil {
 			return err
 		}
+		return extractTar(compressedFile, dir)
+	case ".bz2":
+		compressedFile := bzip2.NewReader(file)
 		return extractTar(compressedFile, dir)
 	default:
 		log.Fatalf("Unknown compression format for file '%s'.", filename)
