@@ -147,12 +147,10 @@ func installPackage(pac gogurt.Package, config gogurt.Config) {
 	// Download tarball
 	url := pac.URL(version)
 	cacheFilename := filepath.Join(config.CacheDir(pac), filepath.Base(url))
-	if err := os.MkdirAll(filepath.Dir(cacheFilename), os.ModePerm); err != nil {
-		log.Fatalf("Error creating cache directory '%s': %s", config.CacheFolder, err.Error())
-	}
+
 	if _, err := os.Stat(cacheFilename); err == nil {
 		log.Printf("File '%s' already exists, not downloading a new copy.", cacheFilename)
-	} else if err := downloadFile(url, cacheFilename); err != nil {
+	} else if err := Download(url, cacheFilename); err != nil {
 		log.Fatalf("Could not download url '%s' to file '%s': %s\n", url, cacheFilename, err.Error())
 	}
 
@@ -170,14 +168,18 @@ func installPackage(pac gogurt.Package, config gogurt.Config) {
 	}
 }
 
-func downloadFile(url string, destinationFilename string) error {
-	log.Printf("Downloading url '%s' to file '%s'.\n", url, destinationFilename)
+func Download(url string, dest string) error {
+	log.Printf("Downloading url '%s' to file '%s'.\n", url, dest)
 
-	destination, err := os.Create(destinationFilename)
+	if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
+		log.Fatalf("Error creating directory '%s' for download:  %s", filepath.Dir(dest), err.Error())
+	}
+
+	destFile, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
-	defer destination.Close()
+	defer destFile.Close()
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -191,11 +193,10 @@ func downloadFile(url string, destinationFilename string) error {
 	}
 	defer redirectedResponse.Body.Close()
 
-	_, err = io.Copy(destination, redirectedResponse.Body)
+	_, err = io.Copy(destFile, redirectedResponse.Body)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
