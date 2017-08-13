@@ -146,9 +146,7 @@ func installPackage(pac gogurt.Package, config gogurt.Config) {
 
 	// Download tarball
 	url := pac.URL(version)
-	// TODO: This assumes we have a tarball. Should account for this.
-	extension := filepath.Ext(url)
-	cacheFilename := filepath.Join(config.CacheFolder, pac.Name(), pac.Name() + "-" + version  + ".tar" + extension)
+	cacheFilename := filepath.Join(config.CacheDir(pac), filepath.Base(url))
 	if err := os.MkdirAll(filepath.Dir(cacheFilename), os.ModePerm); err != nil {
 		log.Fatalf("Error creating cache directory '%s': %s", config.CacheFolder, err.Error())
 	}
@@ -216,6 +214,8 @@ func extractCompressedTar(filename string, dir string) error {
 
 	ext := filepath.Ext(filename)
 	switch ext {
+	case ".tgz":
+		fallthrough
 	case ".gz":
 		compressedFile, err := gzip.NewReader(file)
 		if err != nil {

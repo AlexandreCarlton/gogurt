@@ -28,6 +28,10 @@ type Config struct {
 
 }
 
+func (config Config) CacheDir(archive SourceArchive) string {
+	return filepath.Join(config.CacheFolder, archive.Name(), config.PackageVersions[archive.Name()])
+}
+
 func (config Config) BuildDir(p Package) string {
   return filepath.Join(config.BuildFolder, p.Name(), config.PackageVersions[p.Name()])
 }
