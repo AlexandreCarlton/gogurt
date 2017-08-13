@@ -8,12 +8,8 @@ deps:
 	go get github.com/ulikunitz/xz
 
 build: deps
-	go build cmd/gogurt.go
+	go build github.com/alexandrecarlton/gogurt/cmd/gogurt
 .PHONY: build
-
-run:
-	go run cmd/gogurt.go
-.PHONY: run
 
 build-image:
 	docker build --tag='centos-static' --build-arg user="${USER}" .
