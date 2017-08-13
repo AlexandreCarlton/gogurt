@@ -92,6 +92,8 @@ type CMakeCmd struct {
 	// Generator string // TODO: Add once we get Ninja
 
 	CFlags []string
+
+	PkgConfigPaths []string
 }
 
 func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
@@ -108,6 +110,10 @@ func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = cmakeCmd.BuildDir
+	cmd.Env = append(
+		os.Environ(),
+		"PKG_CONFIG_PATH=" + strings.Join(configure.PkgConfigPaths, ":"),
+	)
 	fmt.Println(cmd)
 	return cmd
 }
