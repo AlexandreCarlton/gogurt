@@ -1,21 +1,12 @@
 package main
 
 import (
-	"archive/tar"
-	"compress/bzip2"
-	"compress/gzip"
-
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
-
 
 	"github.com/alexandrecarlton/gogurt"
 	"github.com/alexandrecarlton/gogurt/packages"
-	"github.com/ulikunitz/xz"
 )
 
 // have table of latest versions?
@@ -150,12 +141,12 @@ func installPackage(pac gogurt.Package, config gogurt.Config) {
 
 	if _, err := os.Stat(cacheFilename); err == nil {
 		log.Printf("File '%s' already exists, not downloading a new copy.", cacheFilename)
-	} else if err := Download(url, cacheFilename); err != nil {
+	} else if err := gogurt.Download(url, cacheFilename); err != nil {
 		log.Fatalf("Could not download url '%s' to file '%s': %s\n", url, cacheFilename, err.Error())
 	}
 
 	buildDirname := config.BuildDir(pac)
-	extractCompressedTar(cacheFilename, buildDirname)
+	gogurt.DecompressSourceArchive(cacheFilename, buildDirname)
 
 	if err := os.Chdir(buildDirname); err != nil {
 		log.Fatalf("Error changing to directory '%s': %s", buildDirname, err.Error())
@@ -166,116 +157,4 @@ func installPackage(pac gogurt.Package, config gogurt.Config) {
 	if err := pac.Install(config); err != nil {
 		log.Fatalf("Error installing package '%s': %s", pac.Name(), err.Error())
 	}
-}
-
-func Download(url string, dest string) error {
-	log.Printf("Downloading url '%s' to file '%s'.\n", url, dest)
-
-	if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
-		log.Fatalf("Error creating directory '%s' for download:  %s", filepath.Dir(dest), err.Error())
-	}
-
-	destFile, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
-	response, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	// Follow redirects. TODO - clean up.
-	finalUrl := response.Request.URL.String()
-	redirectedResponse, err := http.Get(finalUrl)
-	if err != nil {
-		return err
-	}
-	defer redirectedResponse.Body.Close()
-
-	_, err = io.Copy(destFile, redirectedResponse.Body)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func extractCompressedTar(filename string, dir string) error {
-
-	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
-		log.Fatalf("Error creating build directory '%s': %s", dir, err.Error())
-	}
-
-
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	ext := filepath.Ext(filename)
-	switch ext {
-	case ".tgz":
-		fallthrough
-	case ".gz":
-		compressedFile, err := gzip.NewReader(file)
-		if err != nil {
-			return err
-		}
-		defer compressedFile.Close()
-		return extractTar(compressedFile, dir)
-	case ".xz":
-		compressedFile, err := xz.NewReader(file)
-		if err != nil {
-			return err
-		}
-		return extractTar(compressedFile, dir)
-	case ".bz2":
-		compressedFile := bzip2.NewReader(file)
-		return extractTar(compressedFile, dir)
-	default:
-		log.Fatalf("Unknown compression format for file '%s'.", filename)
-		return nil
-	}
-}
-
-func extractTar(file io.Reader, dir string) error {
-
-	tarFile := tar.NewReader(file)
-
-	for {
-		header, err := tarFile.Next()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			return err
-		}
-		// Hack to strip out the leading component.
-		headerName := strings.Join(strings.Split(header.Name, "/")[1:], "/")
-		newFilename := filepath.Join(dir, headerName)
-
-		switch header.Typeflag {
-		case tar.TypeReg: fallthrough
-		case tar.TypeRegA:
-			dir := filepath.Dir(newFilename)
-			os.MkdirAll(dir, os.ModePerm)
-			func() {
-				newFile, _ := os.Create(newFilename)
-				defer newFile.Close()
-				io.Copy(newFile, tarFile)
-				os.Chmod(newFilename, header.FileInfo().Mode())
-			}()
-		case tar.TypeDir:
-			os.MkdirAll(newFilename, os.ModePerm)
-		case tar.TypeSymlink:
-			source := filepath.Join(dir, strings.Join(strings.Split(header.Linkname, "/")[1:], "/"))
-			os.Symlink(source, newFilename)
-		default:
-			log.Println("Header is ", header)
-			log.Println("Typeflag is ", header.Typeflag)
-			// '103' is g = TypeXGlobalHeader
-			log.Printf("No idea what '%s' is (original: '%s').\n", headerName, header.Name)
-		}
-	}
-	return nil
 }
