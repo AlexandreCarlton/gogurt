@@ -7,7 +7,8 @@ install:
   - make deps
 
 before_script:
-  - ln -s $(pwd) $GOPATH/src/github.com/alexandrecarlton/gogurt
+  - mkdir -p $GOPATH/src/github.com/alexandrecarlton
+  - ln -s $PWD $GOPATH/src/github.com/alexandrecarlton/gogurt
 
 script:
   - make build
