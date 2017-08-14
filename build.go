@@ -83,6 +83,9 @@ func (makeCmd MakeCmd) Cmd() *exec.Cmd {
 type CMakeCmd struct {
 	Prefix string
 
+	// Used when searching for include files and libraries
+	PathPrefix []string
+
 	SourceDir string
 
 	BuildDir string
@@ -99,7 +102,7 @@ type CMakeCmd struct {
 func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
 	cacheEntries := make([]string, 1)
 	if len(cmakeCmd.Prefix) > 0 {
-		cacheEntries = append(cacheEntries, "-DCMAKE_INSTALL_PREFIX=" + cmakeCmd.Prefix,)
+		cacheEntries = append(cacheEntries, "-DCMAKE_INSTALL_PREFIX=" + cmakeCmd.Prefix)
 	}
 	for key, value := range cmakeCmd.CacheEntries {
 		cacheEntries = append(cacheEntries, fmt.Sprintf("-D%s=%s", key, value))
@@ -110,10 +113,13 @@ func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Dir = cmakeCmd.BuildDir
-	cmd.Env = append(
-		os.Environ(),
-		"PKG_CONFIG_PATH=" + strings.Join(configure.PkgConfigPaths, ":"),
-	)
+	cmd.Env = os.Environ()
+	if len(cmakeCmd.PathPrefix) > 0 {
+		cmd.Env = append(cmd.Env, "CMAKE_PREFIX_PATH=" + strings.Join(cmakeCmd.PathPrefix, ":"))
+	}
+	if len(cmakeCmd.PkgConfigPaths) > 0 {
+		cmd.Env = append(cmd.Env, "PKG_CONFIG_PATH=" + strings.Join(cmakeCmd.PkgConfigPaths, ":"))
+	}
 	fmt.Println(cmd)
 	return cmd
 }
