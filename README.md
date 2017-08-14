@@ -1,5 +1,7 @@
 # gogurt
 
+[![Build Status](https://travis-ci.org/AlexandreCarlton/gogurt.svg?branch=master)](https://travis-ci.org/AlexandreCarlton/gogurt)
+
 Downloads and builds static packages from source.
 
 The successor to [`install-from-source`](https://github.com/AlexandreCarlton/install-from-source),
