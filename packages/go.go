@@ -1,5 +1,9 @@
 package packages
 
+// golang of versions > 1.4 require an existing go installation.
+// The recomended course of action to build from source is to download
+// a pre-built installation of golang to use in building the newer one.
+// As such, we just download the newest one.
 
 import (
 	"fmt"

@@ -40,7 +40,7 @@ func main() {
 			"gdb": "8.0",
 			"git": "2.13.2",
 			"gmp": "6.1.2",
-			"go": "1.8.3",
+			"go": "1.9",
 			"help2man": "1.47.4",
 			"libevent": "2.1.8-stable",
 			"libtool": "2.4.6",
