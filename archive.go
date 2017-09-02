@@ -71,15 +71,18 @@ func extractTar(file io.Reader, dir string) error {
 		case tar.TypeReg: fallthrough
 		case tar.TypeRegA:
 			dir := filepath.Dir(newFilename)
-			os.MkdirAll(dir, os.ModePerm)
-			func() {
-				newFile, _ := os.Create(newFilename)
-				defer newFile.Close()
-				io.Copy(newFile, tarFile)
-				os.Chmod(newFilename, header.FileInfo().Mode())
-			}()
+			if _, err := os.Stat(dir); os.IsNotExist(err) {
+				os.MkdirAll(dir, 0755)
+			}
+			newFile, _ := os.Create(newFilename)
+			defer newFile.Close()
+			io.Copy(newFile, tarFile)
+			os.Chmod(newFilename, header.FileInfo().Mode())
+			// TODO: Make a PR for this in either archiver or go-getter
+			// to set times, and strip components.
+			os.Chtimes(newFilename, header.FileInfo().ModTime(), header.FileInfo().ModTime())
 		case tar.TypeDir:
-			os.MkdirAll(newFilename, os.ModePerm)
+			//os.MkdirAll(newFilename, os.ModePerm)
 		case tar.TypeSymlink:
 			source := filepath.Join(dir, strings.Join(strings.Split(header.Linkname, "/")[1:], "/"))
 			os.Symlink(source, newFilename)
