@@ -81,9 +81,16 @@ func (makeCmd MakeCmd) Cmd() *exec.Cmd {
 }
 
 type CMakeCmd struct {
+
+	// Path to cmake binary
+	// If empty, we will look up cmake on $PATH
+	Path string
+
+	// TODO: Rename to InstallPrefix
 	Prefix string
 
 	// Used when searching for include files and libraries
+	// TODO: Rename to PrefixPath
 	PathPrefix []string
 
 	SourceDir string
@@ -93,6 +100,8 @@ type CMakeCmd struct {
 	CacheEntries map[string]string
 
 	// Generator string // TODO: Add once we get Ninja
+
+	Paths[] string
 
 	CFlags []string
 
@@ -107,8 +116,13 @@ func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
 	for key, value := range cmakeCmd.CacheEntries {
 		cacheEntries = append(cacheEntries, fmt.Sprintf("-D%s=%s", key, value))
 	}
-
-	cmd := exec.Command("cmake", cacheEntries...)
+	// Hacky way to use our own CMake if provided.
+	var cmd *exec.Cmd
+	if len(cmakeCmd.Path) > 0 {
+		cmd = exec.Command(cmakeCmd.Path, cacheEntries...)
+	} else {
+		cmd = exec.Command("cmake", cacheEntries...)
+	}
 	cmd.Args = append(cmd.Args, cmakeCmd.SourceDir)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -119,6 +133,9 @@ func (cmakeCmd CMakeCmd) Cmd() *exec.Cmd {
 	}
 	if len(cmakeCmd.PkgConfigPaths) > 0 {
 		cmd.Env = append(cmd.Env, "PKG_CONFIG_PATH=" + strings.Join(cmakeCmd.PkgConfigPaths, ":"))
+	}
+	if len(cmakeCmd.Paths) > 0 {
+		cmd.Env = append(cmd.Env, "PATH=" + strings.Join(cmakeCmd.Paths, ":") + ":" + os.Getenv("PATH"))
 	}
 	fmt.Println(cmd)
 	return cmd
