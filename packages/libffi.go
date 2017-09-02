@@ -18,6 +18,7 @@ func (libffi LibFFI) URL(version string) string {
 }
 
 func (libffi LibFFI) Build(config gogurt.Config) error {
+	// TODO: Remove this replacement, and rely on pkg-config to pick up libffi.
 	err := gogurt.ReplaceInFile(
 		"include/Makefile.in",
 		"^includesdir.*",
