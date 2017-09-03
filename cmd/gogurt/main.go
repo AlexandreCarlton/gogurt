@@ -26,6 +26,7 @@ func main() {
 		NumCores: 3,
 		// TODO We'll have a set of default versions, and our config will override the defaults.
 		PackageVersions: map[string]string {
+			"asciidoc": "8.6.9",
 			"aspell": "0.60.6.1",
 			"autoconf": "2.69",
 			"automake": "1.15",
@@ -82,6 +83,7 @@ func main() {
 
 	name := os.Args[1]
 	mappings := map[string]gogurt.Package{
+		"asciidoc": packages.AsciiDoc{},
 		"aspell": packages.Aspell{},
 		"autoconf": packages.AutoConf{},
 		"automake": packages.AutoMake{},
