@@ -54,7 +54,7 @@ func (gcc GCC) Build(config gogurt.Config) error {
 		},
 	}.Cmd()
 	// We're calling configure in the root of the source, but from inside the build directory.
-	configure.Path = "../configure"
+	configure.Path = filepath.Join(config.BuildDir(gcc), "configure")
 	if err := configure.Run(); err != nil {
 		return err
 	}
