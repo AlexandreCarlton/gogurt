@@ -3,6 +3,9 @@ language: go
 go:
   - 1.8
 
+# To speed up the installation of packages.
+cache: ccache
+
 install:
   - make deps
 
