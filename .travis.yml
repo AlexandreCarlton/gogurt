@@ -11,5 +11,5 @@ before_script:
   - ln -s $PWD $GOPATH/src/github.com/alexandrecarlton/gogurt
 
 script:
-  - make build
+  - make install
   - gogurt gcc
