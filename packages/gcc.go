@@ -66,7 +66,13 @@ func (gcc GCC) Build(config gogurt.Config) error {
 }
 
 func (gcc GCC) Install(config gogurt.Config) error {
-	makeInstall := gogurt.MakeCmd{Args: []string{"install"}}.Cmd()
+	buildDir := filepath.Join(config.BuildDir(gcc), "build")
+	makeInstall := gogurt.MakeCmd{
+		Args: []string{
+			"install",
+		},
+		Dir: buildDir,
+	}.Cmd()
 	return makeInstall.Run()
 }
 
