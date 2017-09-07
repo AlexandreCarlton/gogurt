@@ -11,16 +11,6 @@ import (
 func Download(url string, dest string) error {
 	log.Printf("Downloading url '%s' to file '%s'.\n", url, dest)
 
-	if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
-		log.Fatalf("Error creating directory '%s' for download:  %s", filepath.Dir(dest), err.Error())
-	}
-
-	destFile, err := os.Create(dest)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
 	response, err := http.Get(url)
 	if err != nil {
 		return err
@@ -32,6 +22,16 @@ func Download(url string, dest string) error {
 		return err
 	}
 	defer redirectedResponse.Body.Close()
+
+	if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
+		log.Fatalf("Error creating directory '%s' for download:  %s", filepath.Dir(dest), err.Error())
+	}
+
+	destFile, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
 
 	_, err = io.Copy(destFile, redirectedResponse.Body)
 	if err != nil {
