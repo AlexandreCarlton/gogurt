@@ -72,20 +72,37 @@ func extractTar(file io.Reader, dir string) error {
 		case tar.TypeRegA:
 			dir := filepath.Dir(newFilename)
 			if _, err := os.Stat(dir); os.IsNotExist(err) {
-				os.MkdirAll(dir, 0755)
+				if err := os.MkdirAll(dir, 0755); err != nil {
+					return err
+				}
 			}
-			newFile, _ := os.Create(newFilename)
+			newFile, err := os.Create(newFilename)
+			if err != nil {
+				return err
+			}
 			defer newFile.Close()
-			io.Copy(newFile, tarFile)
-			os.Chmod(newFilename, header.FileInfo().Mode())
+
+			if _, err := io.Copy(newFile, tarFile); err != nil {
+				return err
+			}
+			if err := os.Chmod(newFilename, header.FileInfo().Mode()); err != nil {
+				return err
+			}
 			// TODO: Make a PR for this in either archiver or go-getter
 			// to set times, and strip components.
-			os.Chtimes(newFilename, header.FileInfo().ModTime(), header.FileInfo().ModTime())
+			modTime := header.FileInfo().ModTime()
+			if err := os.Chtimes(newFilename, modTime, modTime); err != nil {
+				return err
+			}
 		case tar.TypeDir:
-			//os.MkdirAll(newFilename, os.ModePerm)
+			if err := os.MkdirAll(newFilename, os.ModePerm); err != nil {
+				return err
+			}
 		case tar.TypeSymlink:
 			source := filepath.Join(dir, strings.Join(strings.Split(header.Linkname, "/")[1:], "/"))
-			os.Symlink(source, newFilename)
+			if err := os.Symlink(source, newFilename); err != nil {
+				return err
+			}
 		default:
 			log.Println("Header is ", header)
 			log.Println("Typeflag is ", header.Typeflag)
