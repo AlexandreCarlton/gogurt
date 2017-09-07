@@ -3,9 +3,6 @@ language: go
 go:
   - 1.8
 
-# To speed up the installation of packages.
-cache: ccache
-
 install:
   - make deps
 
@@ -16,3 +13,8 @@ before_script:
 script:
   - make install
   - gogurt gcc
+
+# Purely to debug.
+after_script:
+  - ls ~/.gogurt/build/gcc/7.1.0
+  - file ~/.gogurt/build/gcc/7.1.0/configure
