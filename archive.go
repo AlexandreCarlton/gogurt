@@ -76,24 +76,26 @@ func extractTar(file io.Reader, dir string) error {
 					return err
 				}
 			}
-			newFile, err := os.Create(newFilename)
-			if err != nil {
-				return err
-			}
-			defer newFile.Close()
+			func() {
+				newFile, err := os.Create(newFilename)
+				if err != nil {
+					return err
+				}
+				defer newFile.Close()
 
-			if _, err := io.Copy(newFile, tarFile); err != nil {
-				return err
-			}
-			if err := os.Chmod(newFilename, header.FileInfo().Mode()); err != nil {
-				return err
-			}
-			// TODO: Make a PR for this in either archiver or go-getter
-			// to set times, and strip components.
-			modTime := header.FileInfo().ModTime()
-			if err := os.Chtimes(newFilename, modTime, modTime); err != nil {
-				return err
-			}
+				if _, err := io.Copy(newFile, tarFile); err != nil {
+					return err
+				}
+				if err := os.Chmod(newFilename, header.FileInfo().Mode()); err != nil {
+					return err
+				}
+				// TODO: Make a PR for this in either archiver or go-getter
+				// to set times, and strip components.
+				modTime := header.FileInfo().ModTime()
+				if err := os.Chtimes(newFilename, modTime, modTime); err != nil {
+					return err
+				}
+			}()
 		case tar.TypeDir:
 			if err := os.MkdirAll(newFilename, os.ModePerm); err != nil {
 				return err
