@@ -76,7 +76,7 @@ func extractTar(file io.Reader, dir string) error {
 					return err
 				}
 			}
-			func() {
+			if err := func() error {
 				newFile, err := os.Create(newFilename)
 				if err != nil {
 					return err
@@ -95,7 +95,10 @@ func extractTar(file io.Reader, dir string) error {
 				if err := os.Chtimes(newFilename, modTime, modTime); err != nil {
 					return err
 				}
-			}()
+				return nil
+			}(); err != nil {
+				return err
+			}
 		case tar.TypeDir:
 			if err := os.MkdirAll(newFilename, os.ModePerm); err != nil {
 				return err
