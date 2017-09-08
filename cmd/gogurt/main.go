@@ -166,8 +166,9 @@ func installPackage(pac gogurt.Package, config gogurt.Config) {
 	}
 
 	buildDirname := config.BuildDir(pac)
-	gogurt.DecompressSourceArchive(cacheFilename, buildDirname)
-
+	if err := gogurt.DecompressSourceArchive(cacheFilename, buildDirname); err != nil {
+		log.Fatalf("Error extracting %s to directory %s: %s", cacheFilename, buildDirname, err.Error())
+	}
 	if err := os.Chdir(buildDirname); err != nil {
 		log.Fatalf("Error changing to directory '%s': %s", buildDirname, err.Error())
 	}
