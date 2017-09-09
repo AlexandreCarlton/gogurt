@@ -12,9 +12,5 @@ before_script:
 
 script:
   - make install
-  - gogurt gcc
-
-# Purely to debug.
-after_script:
-  - ls ~/.gogurt/build/gcc/7.1.0
-  - file ~/.gogurt/build/gcc/7.1.0/configure
+  # Wait 60 minutes before timing out... gcc takes 45 minimum to build.
+  - travis_wait 60 bats tests
