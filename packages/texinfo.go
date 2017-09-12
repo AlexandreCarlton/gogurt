@@ -19,11 +19,14 @@ func (texinfo TexInfo) Build(config gogurt.Config) error {
 
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.InstallDir(texinfo),
-		Args: []string{
-			"--disable-perl-api-texi-build",
+		CppFlags: []string{
+			"-I" + config.IncludeDir(Ncurses{}),
 		},
-		Paths: []string{
-			config.BinDir(AutoMake{}),
+		LdFlags: []string{
+			"-L" + config.LibDir(Ncurses{}),
+		},
+		Libs: []string{
+			"-ltinfo",
 		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
@@ -32,9 +35,6 @@ func (texinfo TexInfo) Build(config gogurt.Config) error {
 
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
 	}.Cmd()
 	return make.Run()
 }
@@ -46,6 +46,6 @@ func (texinfo TexInfo) Install(config gogurt.Config) error {
 
 func (texinfo TexInfo) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoMake{},
+		Ncurses{},
 	}
 }

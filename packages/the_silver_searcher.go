@@ -16,9 +16,6 @@ func (ag TheSilverSearcher) URL(version string) string {
 }
 
 func (ag TheSilverSearcher) Build(config gogurt.Config) error {
-	// pkg-config is messing up for some reason.
-	gogurt.ReplaceInFile("configure", "^ *PKG_CHECK_MODULES.*", "")
-	gogurt.ReplaceInFile("configure.ac", "^ *PKG_CHECK_MODULES.*", "")
 
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.InstallDir(ag),
@@ -60,9 +57,6 @@ func (ag TheSilverSearcher) Build(config gogurt.Config) error {
 	}
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
 	}.Cmd()
 	return make.Run()
 }
@@ -74,7 +68,6 @@ func (ag TheSilverSearcher) Install(config gogurt.Config) error {
 
 func (ag TheSilverSearcher) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoMake{},
 		Pcre{},
 		XZ{},
 		Zlib{},

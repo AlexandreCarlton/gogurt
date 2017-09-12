@@ -40,18 +40,12 @@ func (pcre Pcre) Build(config gogurt.Config) error {
 			"-L" + config.LibDir(zlib),
 			"-L" + config.LibDir(bzip2),
 		},
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
 		return err
 	}
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
 	}.Cmd()
 	return make.Run()
 }
@@ -63,7 +57,6 @@ func (pcre Pcre) Install(config gogurt.Config) error {
 
 func (pcre Pcre) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoMake{},
 		Bzip2{},
 		Zlib{},
 	}

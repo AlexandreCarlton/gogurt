@@ -1,5 +1,7 @@
 package packages
 
+// NOTE: 2.2.2 requires texi2html, which has been deprecated by texinfo.
+
 import (
 	"fmt"
 	"github.com/alexandrecarlton/gogurt"
@@ -20,7 +22,6 @@ func (stow Stow) Build(config gogurt.Config) error {
 	configure := gogurt.ConfigureCmd{
 		Prefix: config.InstallDir(stow),
 		Paths: []string{
-			config.BinDir(AutoMake{}),
 			config.BinDir(TexInfo{}),
 		},
 	}.Cmd()
@@ -31,7 +32,6 @@ func (stow Stow) Build(config gogurt.Config) error {
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
 		Paths: []string{
-			config.BinDir(AutoMake{}),
 			config.BinDir(TexInfo{}),
 		},
 	}.Cmd()
@@ -42,7 +42,6 @@ func (stow Stow) Install(config gogurt.Config) error {
 	makeInstall := gogurt.MakeCmd{
 		Args: []string{"install"},
 		Paths: []string{
-			config.BinDir(AutoMake{}),
 			config.BinDir(TexInfo{}),
 		},
 	}.Cmd()
@@ -50,5 +49,7 @@ func (stow Stow) Install(config gogurt.Config) error {
 }
 
 func (stow Stow) Dependencies() []gogurt.Package {
-	return []gogurt.Package{TexInfo{}}
+	return []gogurt.Package{
+		TexInfo{},
+	}
 }

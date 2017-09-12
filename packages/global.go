@@ -26,20 +26,12 @@ func (global Global) Build(config gogurt.Config) error {
 			"--disable-gtagscscope", // for now.
 			"--with-included-ltdl", // could use our own libtool?
 		},
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-			config.BinDir(AutoConf{}),
-		},
 	}.Cmd()
 	if err := configure.Run(); err != nil {
 		return err
 	}
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-			config.BinDir(AutoConf{}),
-		},
 	}.Cmd()
 	return make.Run()
 }
@@ -51,7 +43,6 @@ func (global Global) Install(config gogurt.Config) error {
 
 func (global Global) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoMake{},
 		Ncurses{},
 		UniversalCTags{},
 	}

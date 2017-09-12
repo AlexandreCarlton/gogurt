@@ -29,9 +29,6 @@ func (libtool LibTool) Build(config gogurt.Config) error {
 	}
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
 	}.Cmd()
 	return make.Run()
 }
@@ -43,7 +40,6 @@ func (libtool LibTool) Install(config gogurt.Config) error {
 
 func (libtool LibTool) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoMake{},
 		// TODO: Requires help2man
 	}
 }

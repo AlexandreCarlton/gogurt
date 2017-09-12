@@ -28,9 +28,7 @@ func (xz XZ) Build(config gogurt.Config) error {
 	}
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
+		Paths: []string{},
 	}.Cmd()
 	return make.Run()
 }
@@ -41,7 +39,5 @@ func (xz XZ) Install(config gogurt.Config) error {
 }
 
 func (xz XZ) Dependencies() []gogurt.Package {
-	return []gogurt.Package{
-		AutoMake{},
-	}
+	return []gogurt.Package{}
 }

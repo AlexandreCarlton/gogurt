@@ -30,9 +30,6 @@ func (mpfr MPFR) Build(config gogurt.Config) error {
 	}
 	make := gogurt.MakeCmd{
 		Jobs: config.NumCores,
-		Paths: []string{
-			config.BinDir(AutoMake{}),
-		},
 	}.Cmd()
 	return make.Run()
 }
@@ -44,7 +41,6 @@ func (mpfr MPFR) Install(config gogurt.Config) error {
 
 func (mpfr MPFR) Dependencies() []gogurt.Package {
 	return []gogurt.Package{
-		AutoMake{},
 		GMP{},
 	}
 }
