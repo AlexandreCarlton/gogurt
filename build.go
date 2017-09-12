@@ -17,6 +17,12 @@ type ConfigureCmd struct {
 
 	Args []string
 
+	CC string
+
+	CPP string
+
+	CXX string
+
 	CFlags []string
 
 	CppFlags []string
@@ -37,14 +43,36 @@ type ConfigureCmd struct {
 func (configure ConfigureCmd) Cmd() *exec.Cmd {
 	args := append(configure.Args, "--prefix=" + configure.Prefix)
 	cmd := exec.Command("./configure", args...)
-	cmd.Env = []string{
-		"CFLAGS=" + strings.Join(configure.CFlags, " "),
-		"CPPFLAGS=" + strings.Join(configure.CppFlags, " "),
-		"CXXFLAGS=" + strings.Join(configure.CxxFlags, " "),
-		"LDFLAGS=" + strings.Join(configure.LdFlags, " "),
-		"LIBS=" + strings.Join(configure.Libs, " "),
-		"PATH=" + strings.Join(configure.Paths, ":") + ":" + os.Getenv("PATH"),
-		"PKG_CONFIG_PATH=" + strings.Join(configure.PkgConfigPaths, ":"),
+	cmd.Env = os.Environ()
+	if len(configure.CC) > 0 {
+		cmd.Env = append(cmd.Env, "CC=" + configure.CC)
+	}
+	if len(configure.CPP) > 0 {
+		cmd.Env = append(cmd.Env, "CPP=" + configure.CPP)
+	}
+	if len(configure.CXX) > 0 {
+		cmd.Env = append(cmd.Env, "CXX=" + configure.CXX)
+	}
+	if len(configure.CFlags) > 0 {
+		cmd.Env = append(cmd.Env, "CFLAGS=" + strings.Join(configure.CFlags, " "))
+	}
+	if len(configure.CppFlags) > 0 {
+		cmd.Env = append(cmd.Env, "CPPFLAGS=" + strings.Join(configure.CppFlags, " "))
+	}
+	if len(configure.CxxFlags) > 0 {
+		cmd.Env = append(cmd.Env, "CXXFLAGS=" + strings.Join(configure.CxxFlags, " "))
+	}
+	if len(configure.LdFlags) > 0 {
+		cmd.Env = append(cmd.Env, "LDFLAGS=" + strings.Join(configure.LdFlags, " "))
+	}
+	if len(configure.Libs) > 0 {
+		cmd.Env = append(cmd.Env, "LIBS=" + strings.Join(configure.Libs, " "))
+	}
+	if len(configure.Paths) > 0 {
+		cmd.Env = append(cmd.Env, "PATH=" + strings.Join(configure.Paths, ":") + ":" + os.Getenv("PATH"))
+	}
+	if len(configure.PkgConfigPaths) > 0 {
+		cmd.Env = append(cmd.Env, "PKG_CONFIG_PATH=" + strings.Join(configure.PkgConfigPaths, ":"))
 	}
 	if len(configure.Dir) > 0 {
 		cmd.Dir = configure.Dir
@@ -69,8 +97,9 @@ func (makeCmd MakeCmd) Cmd() *exec.Cmd {
 	jobs := int(math.Max(1, float64(makeCmd.Jobs)))
 	args := append(makeCmd.Args, "--jobs=" + strconv.Itoa(jobs))
 	cmd := exec.Command("make", args...)
-	cmd.Env = []string{
-		"PATH=" + strings.Join(makeCmd.Paths, ":") + ":" + os.Getenv("PATH"),
+	cmd.Env = os.Environ()
+	if len(makeCmd.Paths) > 0 {
+		cmd.Env = append(cmd.Env, "PATH=" + strings.Join(makeCmd.Paths, ":") + ":" + os.Getenv("PATH"))
 	}
 	if len(makeCmd.Dir) > 0 {
 		cmd.Dir = makeCmd.Dir
