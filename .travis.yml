@@ -12,5 +12,4 @@ before_script:
 
 script:
   - make install
-  # Wait 60 minutes before timing out... gcc takes 45 minimum to build.
-  - travis_wait 60 bats tests
+  - bats tests
