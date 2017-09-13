@@ -38,12 +38,18 @@ func (gcc GCC) Build(config gogurt.Config) error {
 		},
 		Dir: buildDir,
 		CFlags: []string{
+			// libcc1.so appears to be always built,
+			// and links in other libs like libstdc++
+			"-fPIC",
 			// "-I" + config.IncludeDir(Zlib{}),
 		},
 		CppFlags: []string{
 			// "-I" + config.IncludeDir(Zlib{}),
 		},
 		CxxFlags: []string{
+			// libcc1.so appears to be always built,
+			// and links in other libs like libstdc++
+			"-fPIC",
 			// "-I" + config.IncludeDir(Zlib{}),
 		},
 		LdFlags: []string{
