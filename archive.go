@@ -103,6 +103,11 @@ func extractTar(file io.Reader, dir string) error {
 			if err := os.MkdirAll(newFilename, os.ModePerm); err != nil {
 				return err
 			}
+		case tar.TypeLink:
+			source := filepath.Join(dir, strings.Join(strings.Split(header.Linkname, "/")[1:], "/"))
+			if err := os.Link(source, newFilename); err != nil {
+				return err
+			}
 		case tar.TypeSymlink:
 			source := filepath.Join(dir, strings.Join(strings.Split(header.Linkname, "/")[1:], "/"))
 			if err := os.Symlink(source, newFilename); err != nil {
