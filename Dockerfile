@@ -8,6 +8,7 @@ RUN yum --assumeyes update \
          glibc-static \
          libstdc++-static \
          cmake \
+         docbook-dtds \
          man-db \
          perl-ExtUtils-MakeMaker \
          pexpect \
