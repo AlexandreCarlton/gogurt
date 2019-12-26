@@ -42,6 +42,7 @@ func (ncurses Ncurses) Build(config gogurt.Config) error {
 		Prefix: config.InstallDir(ncurses),
 		Args: []string{
 			"--with-static",
+			// Should we generate separate terminfo library?
 			"--with-termlib", // generate separate terminfo library
 			"--with-xterm-new", // specify if xterm terminfo should be new version
 			"--with-fallbacks=" + strings.Join(terminals, ","),

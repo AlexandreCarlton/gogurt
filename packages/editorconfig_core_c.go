@@ -27,6 +27,8 @@ func (editorconfig EditorConfigCoreC) Build(config gogurt.Config) error {
 		BuildDir: build,
 		CacheEntries: map[string]string{
 			// "CMAKE_BUILD_TYPE": "Release",
+			// I think this works in CMake 3.0
+			"BUILD_SHARED_LIBS": "OFF",
 			"BUILD_DOCUMENTATION": "OFF",
 			"PCRE_LIBRARY": filepath.Join(config.LibDir(Pcre{}), "libpcre.a"),
 			"PCRE_INCLUDE_DIR": config.IncludeDir(Pcre{}),

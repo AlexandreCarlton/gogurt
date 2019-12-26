@@ -43,7 +43,8 @@ func (git Git) Build(config gogurt.Config) error {
 			"-I" + config.IncludeDir(Zlib{}),
 		},
 		LdFlags: []string{
-			"-static",
+			// git uses getpwnam_r, so we can't statically link it.
+			// "-static",
 			"-L" + config.LibDir(Curl{}),
 			"-L" + config.LibDir(OpenSSL{}),
 			"-L" + config.LibDir(Zlib{}),

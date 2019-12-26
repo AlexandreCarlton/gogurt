@@ -23,7 +23,6 @@ func (golang Go) URL(version string) string {
 }
 
 func (golang Go) Build(config gogurt.Config) error {
-	// It's prebuilt!
 	return nil
 }
 

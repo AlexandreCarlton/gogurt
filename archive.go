@@ -1,7 +1,13 @@
 package gogurt
 
+// TODO:
+// When un-tarring, set all the modified timestamps to be the same at the end of it.
+// Or the beginning (probably easier)
+// mtime or ctime. tar sets it to be the same as the time that it was in the archive.
+
 import (
 	"archive/tar"
+	"archive/zip"
 	"compress/bzip2"
 	"compress/gzip"
 	"io"
@@ -76,6 +82,7 @@ func extractTar(file io.Reader, dir string) error {
 					return err
 				}
 			}
+			// We close off these files so that we do not open too many at once.
 			if err := func() error {
 				newFile, err := os.Create(newFilename)
 				if err != nil {

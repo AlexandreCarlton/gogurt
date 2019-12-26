@@ -36,6 +36,9 @@ func (config Config) BuildDir(p Package) string {
   return filepath.Join(config.BuildFolder, p.Name(), config.PackageVersions[p.Name()])
 }
 
+// CMakeBuildDir?
+// Remember, neovim neeeded a third-party one... Unless we could just replicate its dependencies here.
+
 func (config Config) InstallDir(p Package) string {
   return filepath.Join(config.InstallFolder, p.Name(), config.PackageVersions[p.Name()])
 }
@@ -56,6 +59,8 @@ func (config Config) PkgConfigLibDir(p Package) string {
 	return filepath.Join(config.LibDir(p), "pkgconfig")
 }
 
+// TODO: Remove this, find packages that use it - pkgconfig should always be in the lib dir.
 func (config Config) PkgConfigShareDir(p Package) string {
 	return filepath.Join(config.InstallDir(p), "share", "pkgconfig")
 }
+

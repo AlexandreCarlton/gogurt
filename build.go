@@ -2,6 +2,13 @@ package gogurt
 
 // Contains structures to ease running of common operations.
 // TODO: Have RunCmds(exec.Command...) and it just runs through all in sequence, stopping if one errors.
+// TODO: use logrus
+// provide a logger to these commands? We could potentially provide custom fields for each package..?
+// Or just log with name= and version=
+// WAIT: Have to actually parse the log as it's being run.
+// What if we RunCmds did this for us?
+// NOPE - Can just use 'Logger as an io.Writer' instead (see logrus docs)
+// NOPE - rdiciulously slow
 
 import (
 	"fmt"

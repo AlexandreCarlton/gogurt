@@ -92,6 +92,7 @@ func (llvm LLVM) Build(config gogurt.Config) error {
 		CacheEntries: map[string]string{
 			"CMAKE_BUILD_TYPE": "Release",
 			"BUILD_SHARED_LIBS": "OFF",
+			// TODO: need libclang.a, probably
 			"LIBCLANG_BUILD_STATIC": "ON",
 			// "LLDB_DISABLE_PYTHON": "ON", // TODO: Enable Python (which I imagine involves including openssl, readline, etc... :( )
 		},

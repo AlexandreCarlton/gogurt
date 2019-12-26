@@ -16,18 +16,18 @@ func (zlib Zlib) URL(version string) string {
 }
 
 func (zlib Zlib) Build(config gogurt.Config) error {
-	configure := gogurt.ConfigureCmd{
-		Prefix: config.InstallDir(zlib),
-		Args: []string{ "--static" },
+	make := gogurt.MakeCmd{
+		Jobs: config.NumCores,
+		Args: []string{
+			"CFLAGS=" + config.IncludeDir(Zlib{}),
+			"LDFLAGS=" + config.LibDir(Zlib{}),
+		},
 	}.Cmd()
-	if err := configure.Run(); err != nil {
-		return err
-	}
-	make := gogurt.MakeCmd{Jobs: config.NumCores}.Cmd()
 	return make.Run()
 }
 
 func (zlib Zlib) Install(config gogurt.Config) error {
+
 	make := gogurt.MakeCmd{
 		Args: []string{"install"},
 		Jobs: config.NumCores,
